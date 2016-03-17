@@ -1,26 +1,30 @@
 package main
 
 import (
+  "fmt"
 	"../cardamomo"
 )
 
 func main() {
   c := cardamomo.Instance()
-  c.Get("/", func(res cardamomo.Response) {
+  c.Get("/", func(req cardamomo.Request, res cardamomo.Response) {
     res.Send("Hello world!");
   })
 
-  c.Get("/route2", func(res cardamomo.Response) {
-    res.Send("Hello route 2!");
+  c.Get("/routeget1", func(req cardamomo.Request, res cardamomo.Response) {
+    res.Send("Hello route get 1!");
   })
 
-  c.Post("/route3", func(res cardamomo.Response) {
-    res.Send("Hello route 3!");
+  c.Post("/routepost1", func(req cardamomo.Request, res cardamomo.Response) {
+    res.Send("Hello route post 1!");
   })
 
   c.Base("/base1", func(router cardamomo.Router) {
-    router.Get("/route1", func(res cardamomo.Response) {
-      res.Send("Hello route base1/route1!");
+    router.Get("/routeget1", func(req cardamomo.Request, res cardamomo.Response) {
+      res.Send("Hello route base1/routeget1!");
+    })
+    router.Post("/routepost1", func(req cardamomo.Request, res cardamomo.Response) {
+      res.Send("Hello route base1/routepost1!");
     })
   })
 

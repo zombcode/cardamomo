@@ -16,8 +16,9 @@ func NewRoute(method string, pattern string, callback ReqFunc) Route {
   http.HandleFunc(pattern, func(w http.ResponseWriter, req *http.Request) {
     if( strings.ToLower(req.Method) == strings.ToLower(method) ) {
       fmt.Printf("\n %s: %s \n", req.Method, pattern);
+      request := NewRequest(req)
       response := NewResponse(w)
-      callback(response)
+      callback(request, response)
     }
   })
 

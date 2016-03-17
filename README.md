@@ -41,7 +41,7 @@ for run the cardamomo http server
 For generate GET patterns you can do
 
 ```sh
-c.Get("/", func(res cardamomo.Response) {
+c.Get("/", func(req cardamomo.Request, res cardamomo.Response) {
     res.Send("Hello world!");
 })
 ```
@@ -53,8 +53,8 @@ you can see, the variable **res** in callback function is for send data to the c
 For generate POST patterns you can do
 
 ```sh
-c.Get("/", func(res cardamomo.Response) {
-    res.Send("Hello world!");
+c.Post("/post", func(req cardamomo.Request, res cardamomo.Response) {
+    res.Send("Hello /post!");
 })
 ```
 
@@ -66,19 +66,31 @@ The **base** is used for GROUP various routes below the same base path.
 
 ```sh
 c.Base("/base", func(router cardamomo.Router) {
-    router.Get("/route", func(res cardamomo.Response) {
+    router.Get("/route", func(req cardamomo.Request, res cardamomo.Response) {
         res.Send("Hello route base/route!");
     })
 })
 ```
 
-##### Future
+##### PARAMETERS
+
+If you want send parameters you can do it with
+
+```sh
+c.Post("/post", func(req cardamomo.Request, res cardamomo.Response) {
+    foo := req.GetParam("foo") // This should be return your param
+    res.Send("Hello /post!");
+})
+```
+
+this example is with **POST** method but with **GET** is the same way
+
+##### In future
 
 At this moment the framework is very simple, in the future we want to implement:
 
 - JSON responses
 - GET and POST request data
-- REQUEST body parser
 - Cookies
 - Layout manager
 

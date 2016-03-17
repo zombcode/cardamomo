@@ -10,7 +10,7 @@ type Router struct {
 }
 
 type BaseFunc func (router Router) ()
-type ReqFunc func (res Response) ()
+type ReqFunc func (req Request, res Response) ()
 
 func NewRouter(pattern string) Router {
   return Router{pattern: pattern}
