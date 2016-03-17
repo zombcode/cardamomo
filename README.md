@@ -102,7 +102,7 @@ type BoxSize struct {
   Height int
 }
 
-**...**
+...
 
 c.Get("/routejson", func(req cardamomo.Request, res cardamomo.Response) {
   boxsize := BoxSize {
