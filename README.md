@@ -85,12 +85,45 @@ c.Post("/post", func(req cardamomo.Request, res cardamomo.Response) {
 
 this example is with **POST** method but with **GET** is the same way
 
+##### JSON Responses
+
+If you need **JSON** format responses for your **REST API**,
+you can do it following the next code
+
+```sh
+type Box struct {
+  Size BoxSize
+  Color  string
+  Open   bool
+}
+
+type BoxSize struct {
+  Width  int
+  Height int
+}
+
+**...**
+
+c.Get("/routejson", func(req cardamomo.Request, res cardamomo.Response) {
+  boxsize := BoxSize {
+    Width:  10,
+    Height: 20,
+  }
+
+  box := Box {
+    Size: boxsize,
+    Color:  "blue",
+    Open:   false,
+  }
+
+  res.SendJSON(box)
+})
+```sh
+
 ##### In future
 
 At this moment the framework is very simple, in the future we want to implement:
 
-- JSON responses
-- GET and POST request data
 - Cookies
 - Layout manager
 

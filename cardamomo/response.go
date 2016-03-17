@@ -4,6 +4,7 @@ import (
   "io"
   "net/http"
   "fmt"
+  "encoding/json"
 )
 
 type Response struct {
@@ -17,4 +18,10 @@ func NewResponse(w http.ResponseWriter) Response {
 func (r *Response) Send(m string) {
   fmt.Printf("\n RES: %s \n", m);
   io.WriteString(r.writer, m)
+}
+
+func (r *Response) SendJSON(data interface{}) {
+  result, _ := json.Marshal(data)
+
+  io.WriteString(r.writer, string(result))
 }
