@@ -118,7 +118,7 @@ c.Get("/routejson", func(req cardamomo.Request, res cardamomo.Response) {
 
   res.SendJSON(box)
 })
-```sh
+```
 
 ##### In future
 
