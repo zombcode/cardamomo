@@ -16,7 +16,7 @@ type BoxSize struct {
 }
 
 func main() {
-  c := cardamomo.Instance()
+  c := cardamomo.Instance("8000")
   c.Get("/", func(req cardamomo.Request, res cardamomo.Response) {
     res.Send("Hello world!");
   })
@@ -52,6 +52,11 @@ func main() {
       res.Send("Hello route base1/routepost1!");
     })
   })
+
+	socket := c.OpenSocket("8001")
+	socket.SocketBase("/base1", func(){
+
+	})
 
   c.Run()
 }

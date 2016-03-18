@@ -1,0 +1,7 @@
+<script type="text/javascript">
+  var exampleSocket = new WebSocket("ws://localhost:8000/base1");
+  exampleSocket.onopen = function (event) {
+    console.log("Send message!");
+    exampleSocket.send("Here's some text that the server is urgently awaiting!");
+  };
+</script>

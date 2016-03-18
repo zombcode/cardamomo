@@ -25,7 +25,7 @@ $ git clone https://github.com/zombcode/cardamomo.git
 For instanciate the cardamomo framework in your project, you must write
 
 ```sh
-c := cardamomo.Instance()
+c := cardamomo.Instance("8001")
 ```
 
 at this moment your cardamomo is instanciated. When you are ready, you can do
@@ -126,6 +126,8 @@ At this moment the framework is very simple, in the future we want to implement:
 
 - Cookies
 - Layout manager
+- WebSockets
+- Check for bad routes
 
 ### Version
 **0.0.1**
