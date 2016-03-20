@@ -15,7 +15,6 @@ type SocketRoute struct {
 
 func NewSocketRoute(pattern string, callback SockFunc) SocketRoute {
   return SocketRoute{pattern: pattern, callback: callback}
-  
 }
 
 func (sr *SocketRoute) Listen() {
