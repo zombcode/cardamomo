@@ -104,7 +104,7 @@ http://localhost:8000/routeget2/theparameter1/and/theparameter2
 In the response you can see
 
 ```sh
-Hello route get 1 with param1 = theparameter1 and param2 = theparameter2!
+Hello route get 2 with param1 = theparameter1 and param2 = theparameter2!
 ```
 
 ##### JSON Responses
