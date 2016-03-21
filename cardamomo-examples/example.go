@@ -29,6 +29,10 @@ func main() {
     res.Send("Hello route get 1!");
   })
 
+	c.Get("/routeget2/:param1/and/:param2", func(req cardamomo.Request, res cardamomo.Response) {
+    res.Send("Hello route get 1 with param1 = " + req.GetParam("param1") + " and param2 = " + req.GetParam("param2") + "!");
+  })
+
   c.Get("/routejson", func(req cardamomo.Request, res cardamomo.Response) {
     boxsize := BoxSize {
       Width:  10,
@@ -48,14 +52,21 @@ func main() {
     res.Send("Hello route post 1!");
   })
 
-  c.Base("/base1", func(router cardamomo.Router) {
+  c.Base("/base1", func(router *cardamomo.Router) {
     router.Get("/routeget1", func(req cardamomo.Request, res cardamomo.Response) {
       res.Send("Hello route base1/routeget1!");
     })
     router.Post("/routepost1", func(req cardamomo.Request, res cardamomo.Response) {
       res.Send("Hello route base1/routepost1!");
     })
+		router.Base("/base2", func(router *cardamomo.Router) {
+			router.Get("/routeget1", func(req cardamomo.Request, res cardamomo.Response) {
+	      res.Send("Hello route base1/base2/routeget1!");
+	    })
+		});
   })
+
+	//fmt.Printf("\n\n%s\n\n", c)
 
 	// Sockets
 

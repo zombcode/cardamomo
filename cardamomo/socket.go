@@ -11,10 +11,10 @@ type Socket struct {
 type SockFunc func (route *SocketClient) ()
 type SockActionFunc func (params map[string]interface{}) ()
 
-func NewSocket() Socket {
-  fmt.Printf("\n\nStarting WebSocket server\n\n")
+func NewSocket() *Socket {
+  fmt.Printf("\n * Starting WebSocket server...\n")
 
-  return Socket{}
+  return &Socket{}
 }
 
 func (s *Socket) OnSocketBase(pattern string, callback SockFunc) {

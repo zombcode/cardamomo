@@ -9,21 +9,25 @@ type Router struct {
   routers []*Router
 }
 
-type BaseFunc func (router Router) ()
+type BaseFunc func (router *Router) ()
 type ReqFunc func (req Request, res Response) ()
 
-func NewRouter(pattern string) Router {
-  return Router{pattern: pattern}
+func NewRouter(pattern string) *Router {
+  return &Router{pattern: pattern}
 }
 
 func (r *Router) Base(pattern string, callback BaseFunc) {
-  router := r.addBase(pattern);
+  router := r.addBase(pattern)
   callback(router)
 }
 
-func (r *Router) addBase(pattern string) Router {
+func (r *Router) addBase(pattern string) *Router {
+  if( r.pattern != "/" ) {
+    pattern = r.pattern + pattern
+  }
+
   router := NewRouter(pattern)
-  r.routers = append(r.routers, &router)
+  r.routers = append(r.routers, router)
 
   return router
 }

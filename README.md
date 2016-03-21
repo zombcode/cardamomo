@@ -67,7 +67,7 @@ you can see, the variable **res** in callback function is for send data to the c
 The **base** is used for GROUP various routes below the same base path.
 
 ```sh
-c.Base("/base", func(router cardamomo.Router) {
+c.Base("/base", func(router *cardamomo.Router) {
     router.Get("/route", func(req cardamomo.Request, res cardamomo.Response) {
         res.Send("Hello route base/route!");
     })
@@ -85,7 +85,27 @@ c.Post("/post", func(req cardamomo.Request, res cardamomo.Response) {
 })
 ```
 
-this example is with **POST** method but with **GET** is the same way
+this example is with **POST** method but with **GET** is the same way.
+
+Otherwise, you can send parameters into **URL** with
+
+```sh
+c.Get("/routeget2/:param1/and/:param2", func(req cardamomo.Request, res cardamomo.Response) {
+  res.Send("Hello route get 1 with param1 = " + req.GetParam("param1") + " and param2 = " + req.GetParam("param2") + "!");
+})
+```
+
+In this example you can use the **:param1** and **:param2** as variables. For test this use:
+
+```sh
+http://localhost:8000/routeget2/theparameter1/and/theparameter2
+```
+
+In the response you can see
+
+```sh
+Hello route get 1 with param1 = theparameter1 and param2 = theparameter2!
+```
 
 ##### JSON Responses
 
@@ -193,7 +213,6 @@ At this moment the framework is very simple, in the future we want to implement:
 > - Cookies
 > - Layout manager
 > - Check for bad routes
-> - URL params
 > - File upload (single and multiple)
 
 ### Version

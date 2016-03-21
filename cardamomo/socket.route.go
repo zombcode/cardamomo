@@ -18,7 +18,7 @@ func NewSocketRoute(pattern string, callback SockFunc) SocketRoute {
 }
 
 func (sr *SocketRoute) Listen() {
-  fmt.Printf("\n\nSocket listen on pattern: %s\n\n", sr.pattern)
+  fmt.Printf("   - Socket listen on pattern: %s\n", sr.pattern)
   onConnected := func(ws *websocket.Conn) {
     client := NewSocketClient(ws, sr)
     sr.clients = append(sr.clients, &client)
