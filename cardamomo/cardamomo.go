@@ -61,15 +61,22 @@ func (c *Cardamomo) Run() {
 					currentRoute = route
 					break
 				}
+			} else if( req.URL.Path == route.pattern ) {
+				currentRoute = route
+				break
 			}
 		}
 
-		if( strings.ToLower(req.Method) == strings.ToLower(currentRoute.method) ) {
-      fmt.Printf("\n %s: %s \n", req.Method, currentRoute.pattern);
-      request := NewRequest(req, currentRoute)
-      response := NewResponse(w)
-      currentRoute.callback(request, response)
-    }
+
+
+		if(currentRoute != nil) {
+			if( strings.ToLower(req.Method) == strings.ToLower(currentRoute.method) ) {
+	      fmt.Printf("\n %s: %s \n", req.Method, currentRoute.pattern)
+	      request := NewRequest(req, currentRoute)
+	      response := NewResponse(w)
+	      currentRoute.callback(request, response)
+	    }
+		}
   })
 
 	// Compile routes
