@@ -20,12 +20,14 @@ $ git clone https://github.com/zombcode/cardamomo.git
 
 ### First steps
 
+#### HTTP
+
 ##### Basics
 
 For instanciate the cardamomo framework in your project, you must write
 
 ```sh
-c := cardamomo.Instance("8001")
+c := cardamomo.Instance("8000") // 8000 is the port
 ```
 
 at this moment your cardamomo is instanciated. When you are ready, you can do
@@ -120,14 +122,77 @@ c.Get("/routejson", func(req cardamomo.Request, res cardamomo.Response) {
 })
 ```
 
+#### Sockets
+
+For start a socket, you need instanciate an **HTTP** server before.
+
+```sh
+c := cardamomo.Instance("8000")
+```
+
+After that you now can create the **WebSocket** server with
+
+```sh
+socket := c.OpenSocket()
+```
+
+and use the **socket** variable or whatever you want for control your new socket.
+
+##### Socket base
+
+The base is like **HTTP** base
+
+```sh
+socket.OnSocketBase("/base1", func(client *cardamomo.SocketClient) {
+  // Write your code here!
+})
+```
+
+This event is called whenever a new client is connected using the path "base1"
+
+#### Socket base actions
+
+```sh
+socket.OnSocketBase("/base1", func(client *cardamomo.SocketClient) {
+  client.OnSocketAction("action1", func(sparams map[string]interface{}) {
+    // Write your code here!
+  })
+})
+```
+
+The actions is called when client send a message using the required JSON format:
+
+> - Action: A string with the action name
+> - Params: A JSON with params that will be send to the action
+
+#### Socket send
+
+This action is used with the client variable for sending data to the client websocket,
+for example you can send a message like this
+
+```sh
+type MessageParam struct {
+  param1 string
+  param2 string
+}
+
+socket.OnSocketBase("/base1", func(client *cardamomo.SocketClient) {
+  client.OnSocketAction("action1", func(sparams map[string]interface{}) {
+    params := MessageParam{param1: "The param 1", param2: "The param 2"}
+    client.Send("action1", params)
+  })
+})
+```
+
+Go to **cardamomo-examples** for more info about sockets
+
 ##### In future
 
 At this moment the framework is very simple, in the future we want to implement:
 
-- Cookies
-- Layout manager
-- WebSockets
-- Check for bad routes
+> - Cookies
+> - Layout manager
+> - Check for bad routes
 
 ### Version
-**0.0.1**
+**Alpha - 0.0.1**

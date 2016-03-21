@@ -5,19 +5,19 @@ import (
 )
 
 type Socket struct {
-  port string
   routes []*SocketRoute
 }
 
-type SockFunc func () ()
+type SockFunc func (route *SocketClient) ()
+type SockActionFunc func (params map[string]interface{}) ()
 
-func NewSocket(port string) Socket {
-  fmt.Printf("\n\nStarting TCP server at port:%s\n\n", port)
+func NewSocket() Socket {
+  fmt.Printf("\n\nStarting WebSocket server\n\n")
 
-  return Socket{port: port}
+  return Socket{}
 }
 
-func (s *Socket) SocketBase(pattern string, callback SockFunc) {
+func (s *Socket) OnSocketBase(pattern string, callback SockFunc) {
   s.addBase(pattern, callback);
 }
 

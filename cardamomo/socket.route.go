@@ -20,9 +20,9 @@ func NewSocketRoute(pattern string, callback SockFunc) SocketRoute {
 func (sr *SocketRoute) Listen() {
   fmt.Printf("\n\nSocket listen on pattern: %s\n\n", sr.pattern)
   onConnected := func(ws *websocket.Conn) {
-    fmt.Printf("\n\nClient!\n\n")
-    client := NewSocketClient(ws)
+    client := NewSocketClient(ws, sr)
     sr.clients = append(sr.clients, &client)
+    sr.callback(&client)
     client.Listen()
   }
   http.Handle(sr.pattern, websocket.Handler(onConnected))

@@ -2,6 +2,23 @@
   var exampleSocket = new WebSocket("ws://localhost:8000/base1");
   exampleSocket.onopen = function (event) {
     console.log("Send message!");
-    exampleSocket.send("Here's some text that the server is urgently awaiting!");
+    var params = {
+      "param_1": "Param 1",
+      "param_2": {
+        "inner_1": "Param 2 Inner 1",
+        "inner_2": [10,13,18]
+      }
+    };
+    var message = {
+      "action": "action1",
+      "params": JSON.stringify(params)
+    };
+    message = JSON.stringify(message);
+    console.log(message);
+    exampleSocket.send(message);
+    exampleSocket.onmessage = function (event) {
+      console.log("onMessage");
+      console.log(event.data);
+    }
   };
 </script>

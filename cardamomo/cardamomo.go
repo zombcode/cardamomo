@@ -30,8 +30,8 @@ func (c *Cardamomo) Run() {
 
 // Socket
 
-func (c *Cardamomo) OpenSocket(port string) Socket {
-  return NewSocket(port)
+func (c *Cardamomo) OpenSocket() Socket {
+  return NewSocket()
 }
 
 func (c *Cardamomo) GetSocket() Socket {
