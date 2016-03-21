@@ -214,6 +214,7 @@ At this moment the framework is very simple, in the future we want to implement:
 > - Layout manager
 > - Check for bad routes
 > - File upload (single and multiple)
+> - Set custom 404 using variable callback
 
 ### Version
 **Alpha - 0.0.1**

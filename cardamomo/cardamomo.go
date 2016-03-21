@@ -67,15 +67,17 @@ func (c *Cardamomo) Run() {
 			}
 		}
 
-
-
 		if(currentRoute != nil) {
 			if( strings.ToLower(req.Method) == strings.ToLower(currentRoute.method) ) {
 	      fmt.Printf("\n %s: %s \n", req.Method, currentRoute.pattern)
 	      request := NewRequest(req, currentRoute)
 	      response := NewResponse(w)
 	      currentRoute.callback(request, response)
-	    }
+	    } else {
+				// Return 404
+			}
+		} else {
+			// Return 404
 		}
   })
 
