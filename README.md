@@ -4,7 +4,7 @@
 
 ### Installation
 
-Import next package in your project
+Import the next package in your project
 
 ```sh
 import (
@@ -12,7 +12,7 @@ import (
 )
 ```
 
-Or if you want, can clone the repository with
+Or if you want, you can clone the repository with
 
 ```sh
 $ git clone https://github.com/zombcode/cardamomo.git
@@ -24,13 +24,13 @@ $ git clone https://github.com/zombcode/cardamomo.git
 
 ##### Basics
 
-For instanciate the cardamomo framework in your project, you must write
+For instanciate the **cardamomo** framework in your project, you must write
 
 ```sh
 c := cardamomo.Instance("8000") // 8000 is the port
 ```
 
-at this moment your cardamomo is instanciated. When you are ready, you can do
+at this moment your cardamomo are instanciated. When you are ready, you can do
 
 ```sh
 c.Run()
@@ -193,6 +193,8 @@ At this moment the framework is very simple, in the future we want to implement:
 > - Cookies
 > - Layout manager
 > - Check for bad routes
+> - URL params
+> - File upload (single and multiple)
 
 ### Version
 **Alpha - 0.0.1**
