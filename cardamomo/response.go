@@ -3,7 +3,6 @@ package cardamomo
 import (
   "io"
   "net/http"
-  "fmt"
   "encoding/json"
 )
 
@@ -16,7 +15,6 @@ func NewResponse(w http.ResponseWriter) Response {
 }
 
 func (r *Response) Send(m string) {
-  fmt.Printf("\n RES: %s \n", m);
   io.WriteString(r.writer, m)
 }
 

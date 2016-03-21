@@ -1,6 +1,7 @@
 package cardamomo
 
 import (
+  "fmt"
   "io"
   "encoding/json"
   "golang.org/x/net/websocket"
@@ -43,13 +44,12 @@ func (sc *SocketClient) Listen() {
         } else if err != nil {
           // Error
           } else {
+            fmt.Printf("\n\nAction: %s\n\n", msg.Action)
             for index, action := range sc.actions {
               index = 1
               _ = index
 
               if( msg.Action == action.action ) {
-                //action.callback(msg.Params)
-
           			var params map[string]interface{}
           			err := json.Unmarshal([]byte(msg.Params), &params)
           			if err != nil {

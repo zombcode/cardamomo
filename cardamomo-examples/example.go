@@ -68,7 +68,7 @@ func main() {
 
 			fmt.Printf("\n\nParam: %s\n\n", sparams["param_1"])
 			fmt.Printf("\n\nParam: %s\n\n", sparams["param_2"].(map[string]interface{})["inner_1"])
-			fmt.Printf("\n\nParam: %b\n\n", sparams["param_2"].(map[string]interface{})["inner_2"].([]interface{})[1])
+			fmt.Printf("\n\nParam: %d\n\n", int(sparams["param_2"].(map[string]interface{})["inner_2"].([]interface{})[1].(float64)))
 
 			client.Send("action1", sparams)
 		})

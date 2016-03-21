@@ -2,6 +2,8 @@ package cardamomo
 
 import (
 	"fmt"
+	"runtime"
+  "path"
 	"net/http"
 )
 
@@ -24,6 +26,12 @@ func Instance(port string) Cardamomo {
 // HTTP Server
 
 func (c *Cardamomo) Run() {
+	_, filename, _, ok := runtime.Caller(0)
+  if !ok {
+      panic("No caller information")
+  }
+	http.Handle("/cardamomo/", http.StripPrefix("/cardamomo/", http.FileServer(http.Dir(path.Dir(filename) + "/static"))))
+
 	fmt.Printf("\n\nStarting HTTP server at: http://localhost:%s\n\n", c.Config["server"]["port"])
   http.ListenAndServe(":" + c.Config["server"]["port"], nil)
 }
