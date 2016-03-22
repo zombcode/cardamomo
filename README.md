@@ -182,22 +182,6 @@ c.Get("/deletecookie/:key", func(req cardamomo.Request, res cardamomo.Response) 
 })
 ```
 
-##### Error handler
-
-You can debug errors with the error handler using
-
-```sh
-c.SetErrorHandler(func (code string, req cardamomo.Request, res cardamomo.Response) {
-  fmt.Printf("\nError: %s\n", code)
-
-  if( code == "404" ) {
-    res.Send("Error 404!");
-  }
-})
-```
-
-for example, you can use for 404 errors
-
 #### Sockets
 
 For start a socket, you need instanciate an **HTTP** server before.
@@ -261,6 +245,22 @@ socket.OnSocketBase("/base1", func(client *cardamomo.SocketClient) {
 ```
 
 Go to **cardamomo-examples** for more info about sockets
+
+#### Error handler
+
+You can debug errors with the error handler using
+
+```sh
+c.SetErrorHandler(func (code string, req cardamomo.Request, res cardamomo.Response) {
+  fmt.Printf("\nError: %s\n", code)
+
+  if( code == "404" ) {
+    res.Send("Error 404!");
+  }
+})
+```
+
+for example, you can use for 404 errors
 
 ##### In future
 
