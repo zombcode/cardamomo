@@ -1,0 +1,197 @@
+@font-face {
+    font-family: 'oneday';
+    src: url(../font/ONEDAY.otf) format("opentype");
+}
+
+@font-face {
+    font-family: 'Swistblnk';
+    src: url('../font/Swistblnk Moabhoers.otf') format("opentype");
+}
+
+@font-face {
+    font-family: 'Nickainley';
+    src: url('../font/Nickainley-Normal.otf') format("opentype");
+}
+
+@font-face {
+    font-family: 'Australia';
+    src: url('../font/AUSTRALIA-TITLE.otf') format("opentype");
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+
+}
+
+.c-brown-1 {
+  color: #bda17f;
+}
+
+.zindex-0 {
+  z-index: 0 !important;
+}
+
+.zindex-1 {
+  z-index: 1000 !important;
+}
+
+.zindex-2 {
+  z-index: 2000 !important;
+}
+
+.zindex-3 {
+  z-index: 3000 !important;
+}
+
+.zindex-4 {
+  z-index: 4000 !important;
+}
+
+.zindex-5 {
+  z-index: 5000 !important;
+}
+
+.content {
+  width: 100%;
+  max-width: 900px;
+  height: auto;
+  margin: auto;
+}
+
+.content-inner {
+  padding: 0 25px 0 25px;
+}
+
+a {
+  color: #bda17f;
+}
+
+button {
+  padding: 10px 15px;
+  font: 16px 'Raleway', sans-serif;
+  border-radius: 5px;
+  background: transparent;
+  border: 0;
+  color: #4A4A4A;
+  cursor: pointer;
+  outline: 0;
+
+  -webkit-transition: all 0.5s;
+  -moz-transition: all 0.5s;
+  -o-transition: all 0.5s;
+  transition: all 0.5s;
+}
+
+button > i {
+  font-size: 22px !important;
+  top: 2px;
+  position: relative;
+}
+
+button.white {
+  color: #FFF;
+  border: 1px solid #FFF;
+}
+
+button.white:hover {
+  background-color: #FFF;
+  color: #4A4A4A;
+}
+
+/*************/
+/** TOP BAR **/
+/*************/
+
+#top-bar {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
+
+#top-bar > div {
+  display: table;
+  width: 100%;
+  height: 100px;
+}
+
+#top-bar > div > div {
+  display: table-cell;
+  height: 100px;
+  vertical-align: middle;
+}
+
+#tb-logo {
+  width: 60px;
+  height: 60px;
+  background: url("../img/logo-white@2x.png") center center no-repeat;
+  background-size: cover;
+}
+
+#tb-name {
+  font: 26px 'Swistblnk', sans-serif;
+  color: #FFF;
+  margin-top: 6px;
+}
+
+/**********/
+/** MAIN **/
+/**********/
+
+#main-fixed {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: url("../img/cartel.jpg") center center no-repeat;
+  background-size: cover;
+}
+
+#main {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  padding-top: 100px;
+  margin-top: -100px;
+}
+
+#main-description {
+  margin-top: 180px;
+  font: 16px 'Raleway', sans-serif;
+  color: #FFF;
+  text-align: justify;
+}
+
+#main-code-hilight {
+  width: 100%;
+  max-width: 450px;
+  font-size: 10px;
+}
+
+#main-code-hilight > p {
+  font: 16px 'Raleway', sans-serif;
+  color: #FFF;
+  font-weight: bold;
+}
+
+/**************/
+/** POWERFUL **/
+/**************/
+
+#powerful {
+  position: relative;
+  width: 100%;
+  height: 0;
+  background: #bda17f;
+  background: -moz-linear-gradient(top, #bda17f 0%, #543b50 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#bda17f), color-stop(100%,#543b50));
+  background: -webkit-linear-gradient(top, #bda17f 0%,#543b50 100%);
+  background: -o-linear-gradient(top, #bda17f 0%,#543b50 100%);
+  background: -ms-linear-gradient(top, #bda17f 0%,#543b50 100%);
+  background: linear-gradient(to bottom, #bda17f 0%,#543b50 100%);
+}

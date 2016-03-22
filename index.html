@@ -1,1 +1,79 @@
-Hello!
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Cardamomo</title>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+  <link rel='stylesheet' href='cardamomo-page/css/style.css' />
+  <link href="http://fonts.googleapis.com/css?family=Lato:300,400,700|Raleway:400,300,700" rel="stylesheet" type="text/css">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/styles/default.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/styles/atelier-forest-light.min.css">
+</head>
+<body>
+  <div id="main-fixed" class="zindex-0">
+  </div>
+  <div id="top-bar" class="zindex-5">
+    <div class="content">
+      <div style="width: 60px;">
+        <div id="tb-logo"></div>
+      </div>
+      <div>
+        <div id="tb-name">
+          cArdamomo
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="main" class="zindex-2">
+    <div class="content">
+      <div class="content-inner">
+        <div id="main-description">
+          Cardamomo is a simple framework for <br>
+          <a href="https://golang.org/">Google GO</a> programming language that <br>
+          help developers to build <b class="c-brown-1">GO</b> backend <br>
+          more faster.
+        </div>
+        <div id="main-code-hilight">
+          <p>
+            Example:
+          </p>
+<pre>
+  <code class="go hljs">
+    package main
+
+    import (
+      "github.com/zombcode/cardamomo"
+    )
+
+    func main() {
+      c := cardamomo.Instance("8000")
+
+      c.Get("/", func(req cardamomo.Request, res cardamomo.Response) {
+        res.Send("Hello world!");
+      })
+
+      c.Run()
+    }
+  </code>
+</pre>
+        </div>
+        <div id="main-button-rack">
+          <a href="https://github.com/zombcode/cardamomo" target="_blank">
+            <button class="white">
+              View on GitHub  <i class="fa fa-github"></i>
+            </button>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="powerful" class="zindex-2">
+
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>
