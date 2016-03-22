@@ -84,15 +84,17 @@ func (c *Cardamomo) Run() {
 	// Compile routes
 	fmt.Printf("\n * Compiling routes...\n")
 
-	fmt.Printf("\nBase: %s\n\n", c.router.pattern)
+	fmt.Printf("\n   + Base: %s\n\n", c.router.pattern)
 	for index, route := range c.router.routes {
 		index = 1
 		_ = index
 
-		fmt.Printf("Pattern: %s\n", route.pattern)
+		fmt.Printf("     - Pattern: %s ✓\n", route.pattern)
 		c.compiledRoutes = append(c.compiledRoutes, route)
 	}
 	compileRoutes(c, c.router)
+
+	fmt.Printf("\n * Compiling routes params...\n")
 
 	for index, route := range c.compiledRoutes {
 		index = 1
@@ -100,8 +102,6 @@ func (c *Cardamomo) Run() {
 
 		r, _ := regexp.Compile("/:([a-zA-Z0-9]+)")
 		if(r.MatchString(route.pattern)) {
-			fmt.Printf("\nCompile route params for: %s\n", route.pattern)
-
 			params := r.FindAllString(route.pattern, -1)
 
 			route.patternRegex = route.pattern
@@ -113,7 +113,8 @@ func (c *Cardamomo) Run() {
 				route.patternRegex = strings.Replace(route.patternRegex, param, "/([a-zA-Z0-9]+)", -1)
 			}
 
-			fmt.Printf("Compiled to: %s\n", route.patternRegex)
+			//fmt.Printf("   - Compiled to: %s ✓\n", route.patternRegex)
+			fmt.Printf("\n   + Compiling route params for: %s ✓\n", route.pattern)
 		}
 	}
 
@@ -127,12 +128,12 @@ func compileRoutes(c *Cardamomo, router *Router) {
 		index = 1
 		_ = index
 
-		fmt.Printf("\nBase: %s\n\n", router.pattern)
+		fmt.Printf("\n   + Base: %s\n\n", router.pattern)
 		for index, route := range router.routes {
 			index = 1
 			_ = index
 
-			fmt.Printf("Pattern: %s\n", route.pattern)
+			fmt.Printf("     - Pattern: %s ✓\n", route.pattern)
 			c.compiledRoutes = append(c.compiledRoutes, route)
 		}
 

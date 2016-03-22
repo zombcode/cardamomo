@@ -23,3 +23,7 @@ func (r *Response) SendJSON(data interface{}) {
 
   io.WriteString(r.writer, string(result))
 }
+
+func (r *Response) Render(view string, data interface{}) {
+  
+}
