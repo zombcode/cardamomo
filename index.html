@@ -14,7 +14,7 @@
 <body>
   <div id="main-fixed" class="zindex-0">
   </div>
-  <div id="top-bar" class="zindex-5">
+  <div id="top-bar" class="zindex-4">
     <div class="content">
       <div style="width: 60px;">
         <div id="tb-logo"></div>
@@ -73,7 +73,23 @@
 
   </div>
 
+  <div id="loading-view" class="zindex-5">
+    <div id="loading-logo-1"></div>
+    <div id="loading-logo-2"></div>
+  </div>
+
+  <script   src="https://code.jquery.com/jquery-2.2.2.min.js"   integrity="sha256-36cp2Co+/62rEAAYHLmRCPIych47CvdM+uTBJwSzWjI="   crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script>
+
+  <script>
+  $(window).on("load", function() {
+    setTimeout(function() {
+      $('#loading-view').fadeOut('slow', function() {
+        $(this).remove();
+      });
+    }, 1000);
+  });
+  </script>
 </body>
 </html>
