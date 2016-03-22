@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
+	"strconv"
 )
 
 type Cardamomo struct {
@@ -20,10 +21,22 @@ func Instance(port string) Cardamomo {
   config := make(map[string]map[string]string)
   config["server"] = make(map[string]string)
   config["server"]["port"] = port
+	config["development"] = make(map[string]string)
+	config["development"]["debug"] = "false"
+	config["production"] = make(map[string]string)
+	config["production"]["debug"] = "true"
 
   r := NewRouter("/")
 
   return Cardamomo{router: r, Config: config}
+}
+
+func (c *Cardamomo) SetDevDebugMode(debug bool) {
+	c.Config["development"]["debug"] = strconv.FormatBool(debug)
+}
+
+func (c *Cardamomo) SetProdDebugMode(debug bool) {
+	c.Config["production"]["debug"] = strconv.FormatBool(debug)
 }
 
 // HTTP Server
@@ -43,7 +56,9 @@ func (c *Cardamomo) Run() {
 			_ = index
 
 			if(route.patternRegex != "") {
-				fmt.Printf("Checking: \"%s\" for \"%s\"\n", route.patternRegex, req.URL.Path)
+				if( c.Config["development"]["debug"] == "true" ) {
+					fmt.Printf("Checking: \"%s\" for \"%s\"\n", route.patternRegex, req.URL.Path)
+				}
 
 				r, _ := regexp.Compile(route.patternRegex)
 				if(r.MatchString(req.URL.Path)) {
@@ -56,7 +71,9 @@ func (c *Cardamomo) Run() {
 						route.params[key] = params[index]
 						index += 1
 					}
-					fmt.Printf("There are params: \"%s\"\n", route.params)
+					if( c.Config["development"]["debug"] == "true" ) {
+						fmt.Printf("There are params: \"%s\"\n", route.params)
+					}
 
 					currentRoute = route
 					break
@@ -69,8 +86,10 @@ func (c *Cardamomo) Run() {
 
 		if(currentRoute != nil) {
 			if( strings.ToLower(req.Method) == strings.ToLower(currentRoute.method) ) {
-	      fmt.Printf("\n %s: %s \n", req.Method, currentRoute.pattern)
-	      request := NewRequest(req, currentRoute)
+				if( c.Config["production"]["debug"] == "true" ) {
+	      	fmt.Printf("\n %s: %s => %s \n", req.Method, currentRoute.pattern, req.URL.Path)
+				}
+	      request := NewRequest(w, req, currentRoute)
 	      response := NewResponse(w)
 	      currentRoute.callback(request, response)
 	    } else {

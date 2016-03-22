@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 	"../cardamomo"
 )
 
@@ -30,7 +31,7 @@ func main() {
   })
 
 	c.Get("/routeget2/:param1/and/:param2", func(req cardamomo.Request, res cardamomo.Response) {
-    res.Send("Hello route get 1 with param1 = " + req.GetParam("param1") + " and param2 = " + req.GetParam("param2") + "!");
+    res.Send("Hello route get 1 with param1 = " + req.GetParam("param1", "") + " and param2 = " + req.GetParam("param2", "") + "!");
   })
 
   c.Get("/routejson", func(req cardamomo.Request, res cardamomo.Response) {
@@ -66,7 +67,25 @@ func main() {
 		});
   })
 
-	//fmt.Printf("\n\n%s\n\n", c)
+	// Cookies
+
+	c.Get("/setcookie/:key/:value", func(req cardamomo.Request, res cardamomo.Response) {
+		key := req.GetParam("key", "")
+		value := req.GetParam("value", "")
+
+		expire := time.Now().AddDate(0, 0, 1) // Expires in one day!
+		req.SetCookie(key, value, "/", "localhost", expire, 86400, false, false) // key, value, path, domain, expiration, max-age, httponly, secure
+
+    res.Send("Added cookie \"" + key + "\"=\"" + value + "\"");
+  })
+
+	c.Get("/getcookie/:key", func(req cardamomo.Request, res cardamomo.Response) {
+		key := req.GetParam("key", "")
+
+		cookie := req.GetCookie(key, "empty cookie!"); // key, defaultValue
+
+    res.Send("The value for cookie \"" + key + "\" is \"" + cookie + "\"");
+  })
 
 	// Sockets
 

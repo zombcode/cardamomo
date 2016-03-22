@@ -80,7 +80,7 @@ If you want send parameters you can do it with
 
 ```sh
 c.Post("/post", func(req cardamomo.Request, res cardamomo.Response) {
-    foo := req.GetParam("foo") // This should be return your param
+    foo := req.GetParam("foo", "default value") // This should be return your param
     res.Send("Hello /post!");
 })
 ```
@@ -91,7 +91,7 @@ Otherwise, you can send parameters into **URL** with
 
 ```sh
 c.Get("/routeget2/:param1/and/:param2", func(req cardamomo.Request, res cardamomo.Response) {
-  res.Send("Hello route get 1 with param1 = " + req.GetParam("param1") + " and param2 = " + req.GetParam("param2") + "!");
+  res.Send("Hello route get 1 with param1 = " + req.GetParam("param1", "default value") + " and param2 = " + req.GetParam("param2", "default value") + "!");
 })
 ```
 
@@ -139,6 +139,34 @@ c.Get("/routejson", func(req cardamomo.Request, res cardamomo.Response) {
   }
 
   res.SendJSON(box)
+})
+```
+
+##### Cookies
+
+If you need cookies, you can do this for add a new cookie
+
+```sh
+c.Get("/setcookie/:key/:value", func(req cardamomo.Request, res cardamomo.Response) {
+  key := req.GetParam("key", "")
+  value := req.GetParam("value", "")
+
+  expire := time.Now().AddDate(0, 0, 1) // Expires in one day!
+  req.SetCookie(key, value, "/", "localhost", expire, 86400, false, false) // key, value, path, domain, expiration, max-age, httponly, secure
+
+  res.Send("Added cookie \"" + key + "\"=\"" + value + "\"");
+})
+```
+
+and if you need get cookie:
+
+```sh
+c.Get("/getcookie/:key", func(req cardamomo.Request, res cardamomo.Response) {
+  key := req.GetParam("key", "")
+
+  cookie := req.GetCookie(key, "empty cookie!"); // key, defaultValue
+
+  res.Send("The value for cookie \"" + key + "\" is \"" + cookie + "\"");
 })
 ```
 
@@ -210,7 +238,6 @@ Go to **cardamomo-examples** for more info about sockets
 
 At this moment the framework is very simple, in the future we want to implement:
 
-> - Cookies
 > - Layout manager
 > - Check for bad routes
 > - File upload (single and multiple)
