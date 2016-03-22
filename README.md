@@ -158,7 +158,7 @@ c.Get("/setcookie/:key/:value", func(req cardamomo.Request, res cardamomo.Respon
 })
 ```
 
-and if you need get cookie:
+and if you need get cookie
 
 ```sh
 c.Get("/getcookie/:key", func(req cardamomo.Request, res cardamomo.Response) {
@@ -167,6 +167,18 @@ c.Get("/getcookie/:key", func(req cardamomo.Request, res cardamomo.Response) {
   cookie := req.GetCookie(key, "empty cookie!"); // key, defaultValue
 
   res.Send("The value for cookie \"" + key + "\" is \"" + cookie + "\"");
+})
+```
+
+at end, if you need delete cookie you can do
+
+```sh
+c.Get("/deletecookie/:key", func(req cardamomo.Request, res cardamomo.Response) {
+  key := req.GetParam("key", "")
+
+  req.DeleteCookie(key, "/", "localhost"); // key, defaultValue
+
+  res.Send("Deleted cookie \"" + key + "\"");
 })
 ```
 

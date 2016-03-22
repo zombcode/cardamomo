@@ -87,6 +87,14 @@ func main() {
     res.Send("The value for cookie \"" + key + "\" is \"" + cookie + "\"");
   })
 
+	c.Get("/deletecookie/:key", func(req cardamomo.Request, res cardamomo.Response) {
+		key := req.GetParam("key", "")
+
+		req.DeleteCookie(key, "/", "localhost"); // key, defaultValue
+
+    res.Send("Deleted cookie \"" + key + "\"");
+  })
+
 	// Sockets
 
 	socket := c.OpenSocket()
