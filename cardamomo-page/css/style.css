@@ -119,7 +119,7 @@ button.white:hover {
   background: -ms-linear-gradient(top, #bda17f 0%,#543b50 100%);
   background: linear-gradient(to bottom, #bda17f 0%,#543b50 100%);
 
-  opacity: 0.5
+  opacity: 0.6
 }
 
 #loading-logo-1 {
@@ -228,8 +228,9 @@ button.white:hover {
   height: 100%;
   top: 0;
   left: 0;
-  background: url("../img/cartel.jpg") center center no-repeat;
   background-size: cover;
+
+  opacity: 0;
 }
 
 #main {

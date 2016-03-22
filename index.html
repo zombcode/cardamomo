@@ -90,11 +90,17 @@
 
   <script>
   $(window).on("load", function() {
-    setTimeout(function() {
-      $('#loading-view').fadeOut('slow', function() {
-        $(this).remove();
+    var img=new Image();
+    img.src="http://zombcode.github.io/cardamomo/cardamomo-page/img/cartel.jpg";
+
+    $('#main-fixed').css('background', 'url("http://zombcode.github.io/cardamomo/cardamomo-page/img/cartel.jpg") center center no-repeat');
+    $('#main-fixed').fadeTo( "slow" , 1, function() {
+      $('#loading-view').fadeTo( "slow" , 0.5, function() {
+        $('#loading-view').fadeOut('slow', function() {
+          $(this).remove();
+        });
       });
-    }, 1000);
+    });
   });
   </script>
 </body>
