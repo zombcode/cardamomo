@@ -15,7 +15,10 @@ type Cardamomo struct {
 	socket *Socket
 	compiledRoutes []*Route
   Config map[string]map[string]string
+	errorHandler ErrorFunc
 }
+
+type ErrorFunc func (code string, req Request, res Response) ()
 
 func Instance(port string) Cardamomo {
   config := make(map[string]map[string]string)
@@ -37,6 +40,10 @@ func (c *Cardamomo) SetDevDebugMode(debug bool) {
 
 func (c *Cardamomo) SetProdDebugMode(debug bool) {
 	c.Config["production"]["debug"] = strconv.FormatBool(debug)
+}
+
+func (c *Cardamomo) SetErrorHandler(callback ErrorFunc) {
+	c.errorHandler = callback
 }
 
 // HTTP Server
@@ -93,10 +100,26 @@ func (c *Cardamomo) Run() {
 	      response := NewResponse(w)
 	      currentRoute.callback(request, response)
 	    } else {
-				// Return 404
+				if( c.Config["production"]["debug"] == "true" ) {
+					fmt.Printf("\n HTTP ERROR: 404")
+				}
+
+				if( c.errorHandler != nil ) {
+					request := NewRequest(w, req, nil)
+		      response := NewResponse(w)
+					c.errorHandler("404", request, response)
+				}
 			}
 		} else {
-			// Return 404
+			if( c.Config["production"]["debug"] == "true" ) {
+				fmt.Printf("\n HTTP ERROR: 404")
+			}
+
+			if( c.errorHandler != nil ) {
+				request := NewRequest(w, req, nil)
+	      response := NewResponse(w)
+				c.errorHandler("404", request, response)
+			}
 		}
   })
 

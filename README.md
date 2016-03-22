@@ -182,6 +182,22 @@ c.Get("/deletecookie/:key", func(req cardamomo.Request, res cardamomo.Response) 
 })
 ```
 
+##### Error handler
+
+You can debug errors with the error handler using
+
+```sh
+c.SetErrorHandler(func (code string, req cardamomo.Request, res cardamomo.Response) {
+  fmt.Printf("\nError: %s\n", code)
+
+  if( code == "404" ) {
+    res.Send("Error 404!");
+  }
+})
+```
+
+for example, you can use for 404 errors
+
 #### Sockets
 
 For start a socket, you need instanciate an **HTTP** server before.
@@ -251,9 +267,7 @@ Go to **cardamomo-examples** for more info about sockets
 At this moment the framework is very simple, in the future we want to implement:
 
 > - Layout manager
-> - Check for bad routes
 > - File upload (single and multiple)
-> - Set custom 404 using variable callback
 
 ### Version
 **Alpha - 0.0.1**

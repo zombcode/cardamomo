@@ -95,6 +95,16 @@ func main() {
     res.Send("Deleted cookie \"" + key + "\"");
   })
 
+	// Error handler
+
+	c.SetErrorHandler(func (code string, req cardamomo.Request, res cardamomo.Response) {
+		fmt.Printf("\nError: %s\n", code)
+
+		if( code == "404" ) {
+			res.Send("Error 404!");
+		}
+	})
+
 	// Sockets
 
 	socket := c.OpenSocket()

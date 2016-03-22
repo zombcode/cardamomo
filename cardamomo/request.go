@@ -13,7 +13,12 @@ type Request struct {
 
 func NewRequest(w http.ResponseWriter, req *http.Request, route *Route) Request {
   req.ParseForm()
-  return Request{w: w, httprequest: req, params: route.params}
+
+  if( route != nil ) {
+    return Request{w: w, httprequest: req, params: route.params}
+  }
+
+  return Request{w: w, httprequest: req}
 }
 
 func (r *Request) GetParam(key string, defaultValue string) string {
