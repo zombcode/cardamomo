@@ -210,7 +210,7 @@ socket.OnSocketBase("/base1", func(client *cardamomo.SocketClient) {
 
 This event is called whenever a new client is connected using the path "base1"
 
-#### Socket base actions
+##### Socket base actions
 
 ```sh
 socket.OnSocketBase("/base1", func(client *cardamomo.SocketClient) {
@@ -225,7 +225,7 @@ The actions is called when client send a message using the required JSON format:
 > - Action: A string with the action name
 > - Params: A JSON with params that will be send to the action
 
-#### Socket send
+##### Socket send
 
 This action is used with the client variable for sending data to the client websocket,
 for example you can send a message like this
