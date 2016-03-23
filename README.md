@@ -176,7 +176,7 @@ at end, if you need delete cookie you can do
 c.Get("/deletecookie/:key", func(req cardamomo.Request, res cardamomo.Response) {
   key := req.GetParam("key", "")
 
-  req.DeleteCookie(key, "/", "localhost"); // key, defaultValue
+  req.DeleteCookie(key, "/", "localhost"); // key, path, domain
 
   res.Send("Deleted cookie \"" + key + "\"");
 })

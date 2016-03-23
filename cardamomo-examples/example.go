@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"time"
-	"../cardamomo"
+	"../../cardamomo"
 )
 
 type Box struct {
