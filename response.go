@@ -20,10 +20,10 @@ func (r *Response) Send(m string) {
 
 func (r *Response) SendJSON(data interface{}) {
   result, _ := json.Marshal(data)
-
+  r.writer.Header().Set("Content-Type", "application/json")
   io.WriteString(r.writer, string(result))
 }
 
 func (r *Response) Render(view string, data interface{}) {
-  
+
 }
