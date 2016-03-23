@@ -7,25 +7,21 @@ import (
 )
 
 type Response struct {
-  writer http.ResponseWriter
+  Writer http.ResponseWriter
 }
 
 func NewResponse(w http.ResponseWriter) Response {
-  return Response{writer: w}
-}
-
-func (r *Response) Writer() http.ResponseWriter {
-  return r.writer
+  return Response{Writer: w}
 }
 
 func (r *Response) Send(m string) {
-  io.WriteString(r.writer, m)
+  io.WriteString(r.Writer, m)
 }
 
 func (r *Response) SendJSON(data interface{}) {
   result, _ := json.Marshal(data)
-  r.writer.Header().Set("Content-Type", "application/json")
-  io.WriteString(r.writer, string(result))
+  r.Writer.Header().Set("Content-Type", "application/json")
+  io.WriteString(r.Writer, string(result))
 }
 
 func (r *Response) Render(view string, data interface{}) {
