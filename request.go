@@ -2,7 +2,11 @@ package cardamomo
 
 import (
   "net/http"
+  "mime/multipart"
   "time"
+  "strings"
+  "io"
+  "os"
 )
 
 type Request struct {
@@ -13,6 +17,10 @@ type Request struct {
 
 func NewRequest(w http.ResponseWriter, req *http.Request, route *Route) Request {
   req.ParseForm()
+
+  if(strings.Contains(req.Header.Get("Content-Type"), "multipart/form-data")) {
+    req.ParseMultipartForm(32 << 20)
+  }
 
   if( route != nil ) {
     return Request{w: w, httprequest: req, params: route.params}
@@ -34,6 +42,10 @@ func (r *Request) GetParam(key string, defaultValue string) string {
    return defaultValue
 }
 
+func (r * Request) GetFile(key string) (multipart.File, *multipart.FileHeader, error) {
+  return r.httprequest.FormFile(key)
+}
+
 func (r *Request) SetCookie(key string, value string, path string, domain string, expire time.Time, maxage int, secure bool, httponly bool) {
   cookie := &http.Cookie{key, value, path, domain, expire, expire.Format(time.UnixDate), maxage, secure, httponly, key + "=" + value, []string{key + "=" + value}}
   http.SetCookie(r.w, cookie)
@@ -51,4 +63,27 @@ func (r *Request) GetCookie(key string, defaultValue string) string {
 func (r *Request) DeleteCookie(key string, path string, domain string) {
   expire := time.Now().AddDate(0, 0, -1) // Expires yesterday!
   r.SetCookie(key, "", path, domain, expire, 0, false, false)
+}
+
+func (r *Request) MoveUploadedFile(fileKey string, destinationPath string) bool {
+  f1, _, err := r.GetFile("foo")
+  if err != nil {
+    return false
+  }
+  defer f1.Close()
+
+  f2, err := os.OpenFile(destinationPath, os.O_WRONLY|os.O_CREATE, 0666)
+  if err != nil {
+    return false
+  }
+  defer f2.Close()
+
+  n, err := io.Copy(f2, f1)
+  _ = n
+
+  if err != nil {
+    return false
+  }
+
+  return true
 }

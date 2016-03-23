@@ -57,6 +57,12 @@ func main() {
     res.Send("Hello route post 1!");
   })
 
+	c.Post("/fileupload", func(req cardamomo.Request, res cardamomo.Response) {
+		req.MoveUploadedFile("foo", "./tmp/filetest.jpg");
+
+		res.Send("Hello file upload!");
+  })
+
   c.Base("/base1", func(router *cardamomo.Router) {
     router.Get("/routeget1", func(req cardamomo.Request, res cardamomo.Response) {
       res.Send("Hello route base1/routeget1!");
