@@ -244,6 +244,36 @@ socket.OnSocketBase("/base1", func(client *cardamomo.SocketClient) {
 })
 ```
 
+If you need send **broadcast** to all clients, clients attached to concrete base
+or a concrete client, you can do next
+
+For broadcast:
+```sh
+...
+
+socket.Send("theaction", theparams)
+
+...
+```
+
+For concrete base:
+```sh
+...
+
+socket.SendBase("/thebase", "theaction", theparams)
+
+...
+```
+
+For concrete client:
+```sh
+...
+
+socket.SendClient("theclientID","theaction", theparams)
+
+...
+```
+
 Go to **cardamomo-examples** for more info about sockets
 
 #### Error handler

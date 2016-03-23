@@ -56,6 +56,10 @@ func (c *Cardamomo) Run() {
 	http.Handle("/cardamomo/", http.StripPrefix("/cardamomo/", http.FileServer(http.Dir(path.Dir(filename) + "/static"))))
 
 	http.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
+		if( req.URL.Path == "/favicon.ico" ) {
+			return
+		}
+
 		var currentRoute *Route
 
 		for index, route := range c.compiledRoutes {
@@ -101,7 +105,7 @@ func (c *Cardamomo) Run() {
 	      currentRoute.callback(request, response)
 	    } else {
 				if( c.Config["production"]["debug"] == "true" ) {
-					fmt.Printf("\n HTTP ERROR: 404")
+					fmt.Printf("\n HTTP ERROR: 404 - 1")
 				}
 
 				if( c.errorHandler != nil ) {
@@ -112,7 +116,7 @@ func (c *Cardamomo) Run() {
 			}
 		} else {
 			if( c.Config["production"]["debug"] == "true" ) {
-				fmt.Printf("\n HTTP ERROR: 404")
+				fmt.Printf("\n HTTP ERROR: 404 - 2")
 			}
 
 			if( c.errorHandler != nil ) {

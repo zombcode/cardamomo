@@ -22,6 +22,7 @@ func main() {
 	// HTTP
 
   c := cardamomo.Instance("8000")
+
   c.Get("/", func(req cardamomo.Request, res cardamomo.Response) {
     res.Send("Hello world!");
   })
@@ -121,6 +122,24 @@ func main() {
 			client.Send("action1", sparams)
 		})
 	})
+
+	c.Get("/socket/broadcast/:message", func(req cardamomo.Request, res cardamomo.Response) {
+		params := make(map[string]interface{})
+		params["message"] = req.GetParam("message", "Default message")
+
+		socket.Send("broadcast", params);
+		socket.SendBase("/base1", "broadcast", params);
+    res.Send("Broadcast \"" + req.GetParam("message", "Default message") + "\" sended!");
+  })
+
+	c.Get("/socket/chat/:id/:message", func(req cardamomo.Request, res cardamomo.Response) {
+		params := make(map[string]interface{})
+		params["message"] = req.GetParam("message", "Default message")
+
+		socket.SendClient(req.GetParam("id", ""), "chat", params);
+
+    res.Send("Message \"" + req.GetParam("message", "Default message") + "\" sended to client \"" + req.GetParam("id", "Empty client!") + "\"!");
+  })
 
   c.Run()
 }

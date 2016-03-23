@@ -5,6 +5,7 @@ var Cardamomo = function() {
     var _socket
     var _actions = [];
     var _onOpen = null;
+    var self = this;
 
     openSocket(path);
 
@@ -17,17 +18,23 @@ var Cardamomo = function() {
 
       _socket = new WebSocket(path);
       _socket.onopen = function (event) {
-        if(_onOpen != null) {
-          _onOpen();
-        }
+        self.send("CardamomoSocketInit", "{}");
 
         _socket.onmessage = function (event) {
           try {
             var data = JSON.parse(event.data);
-            for( var i in _actions ) {
-              var action = _actions[i];
-              if( action.Action == data.action ) {
-                action.callback(data.Params);
+            if( data.Action == "CardamomoSocketInit" ) {
+              self.id = data.Params.id;
+
+              if(_onOpen != null) {
+                _onOpen();
+              }
+            } else {
+              for( var i in _actions ) {
+                var action = _actions[i];
+                if( action.action == data.Action ) {
+                  action.callback(data.Params);
+                }
               }
             }
           } catch(e) {}

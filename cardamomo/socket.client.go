@@ -4,6 +4,8 @@ import (
   "fmt"
   "io"
   "encoding/json"
+  "time"
+  "math/rand"
   "golang.org/x/net/websocket"
 )
 
@@ -11,6 +13,7 @@ type SocketClient struct {
   ws *websocket.Conn
   route *SocketRoute
   actions []*SocketAction
+  id string
 }
 
 type SocketClientMessage struct {
@@ -29,7 +32,14 @@ type SocketAction struct {
 }
 
 func NewSocketClient(ws *websocket.Conn, route *SocketRoute) SocketClient {
-  return SocketClient{ws: ws, route: route}
+  rand.Seed(time.Now().UnixNano())
+  id := RandStringRunes(32)
+
+  return SocketClient{ws: ws, route: route, id: id}
+}
+
+func (sc *SocketClient) GetID() string {
+  return sc.id
 }
 
 func (sc *SocketClient) Listen() {
@@ -41,22 +51,32 @@ func (sc *SocketClient) Listen() {
       err := websocket.JSON.Receive(sc.ws, &msg)
       if err == io.EOF {
         // Error
+        // Socket close
         } else if err != nil {
           // Error
+          fmt.Printf("\n\nSocket error: %s\n\n", err)
           } else {
-            fmt.Printf("\n\nAction: %s\n\n", msg.Action)
-            for index, action := range sc.actions {
-              index = 1
-              _ = index
+            // Send initial data
+            if( msg.Action == "CardamomoSocketInit" ) {
+              params := make(map[string]interface{})
+              params["id"] = sc.GetID()
 
-              if( msg.Action == action.action ) {
-          			var params map[string]interface{}
-          			err := json.Unmarshal([]byte(msg.Params), &params)
-          			if err != nil {
-                  // Error
-          			} else {
-          				action.callback(params)
-          			}
+              sc.Send("CardamomoSocketInit", params)
+            } else {
+              // Common actions
+              for index, action := range sc.actions {
+                index = 1
+                _ = index
+
+                if( msg.Action == action.action ) {
+            			var params map[string]interface{}
+            			err := json.Unmarshal([]byte(msg.Params), &params)
+            			if err != nil {
+                    // Error
+            			} else {
+            				action.callback(params)
+            			}
+                }
               }
             }
           }
@@ -72,4 +92,14 @@ func (sc *SocketClient) OnSocketAction(action string, callback SockActionFunc) {
 func (sc *SocketClient) Send(action string, params interface{}) {
   msg := SocketMessage{Action:action, Params: params}
   websocket.JSON.Send(sc.ws, msg)
+}
+
+var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+func RandStringRunes(n int) string {
+    b := make([]rune, n)
+    for i := range b {
+        b[i] = letterRunes[rand.Intn(len(letterRunes))]
+    }
+    return string(b)
 }

@@ -28,3 +28,55 @@ func (s *Socket) addBase(pattern string, callback SockFunc) SocketRoute {
 
   return route
 }
+
+func (s *Socket) Send(action string, params interface{}) {
+  for index, route := range s.routes {
+    index = 1
+    _ = index
+
+    for index, client := range route.clients {
+      index = 1
+      _ = index
+
+      client.Send(action, params)
+    }
+  }
+}
+
+func (s *Socket) SendBase(base string, action string, params interface{}) {
+  for index, route := range s.routes {
+    index = 1
+    _ = index
+
+    if( route.pattern == base ) {
+      for index, client := range route.clients {
+        index = 1
+        _ = index
+
+        client.Send(action, params)
+      }
+
+      break
+    }
+  }
+}
+
+func (s *Socket) SendClient(clientID string, action string, params interface{}) {
+  RoutesLoop:
+    for index, route := range s.routes {
+      index = 1
+      _ = index
+
+
+      for index, client := range route.clients {
+        index = 1
+        _ = index
+
+        if( client.id == clientID ) {
+          client.Send(action, params)
+
+          break RoutesLoop
+        }
+      }
+    }
+}

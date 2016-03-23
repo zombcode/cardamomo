@@ -3,7 +3,7 @@
   var cardamomo = new Cardamomo();
   var socket = cardamomo.socket("localhost:8000/base1");
   socket.onOpen(function() {
-    console.log("Socket opened!");
+    console.log("Socket opened with id " + socket.id + "!");
 
     var params = {
       "param_1": "Param 1",
@@ -16,7 +16,17 @@
     socket.send("action1", JSON.stringify(params));
 
     socket.on("action1", function(params) {
-      console.log("OnMessage!");
+      console.log("On action1!");
+      console.log(params);
+    })
+
+    socket.on("chat", function(params) {
+      console.log("On chat!");
+      console.log(params);
+    })
+
+    socket.on("broadcast", function(params) {
+      console.log("On broadcast!");
       console.log(params);
     })
   });
