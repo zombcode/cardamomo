@@ -24,6 +24,9 @@ func main() {
   c := cardamomo.Instance("8000")
 
   c.Get("/", func(req cardamomo.Request, res cardamomo.Response) {
+		res.Writer().Header().Set("Access-Control-Allow-Origin", "*")
+    res.Writer().Header().Set("Access-Control-Allow-Headers", "Accept,Authorization,Cache-Control,Content-Type,DNT,If-Modified-Since,Keep-Alive,Origin,User-Agent,X-Mx-ReqToken,X-Requested-With");
+
     res.Send("Hello world!");
   })
 

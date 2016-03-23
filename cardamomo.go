@@ -60,9 +60,6 @@ func (c *Cardamomo) Run() {
 			return
 		}
 
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-    w.Header().Set("Access-Control-Allow-Headers", "Accept,Authorization,Cache-Control,Content-Type,DNT,If-Modified-Since,Keep-Alive,Origin,User-Agent,X-Mx-ReqToken,X-Requested-With");
-
 		var currentRoute *Route
 
 		for index, route := range c.compiledRoutes {

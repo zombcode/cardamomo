@@ -14,6 +14,10 @@ func NewResponse(w http.ResponseWriter) Response {
   return Response{writer: w}
 }
 
+func (r *Response) Writer() http.ResponseWriter {
+  return r.writer
+}
+
 func (r *Response) Send(m string) {
   io.WriteString(r.writer, m)
 }
