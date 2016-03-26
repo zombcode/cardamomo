@@ -4,7 +4,7 @@
 
 ### Installation
 
-Import the next package in your project
+Import the next package in your project:
 
 ```sh
 import (
@@ -12,11 +12,18 @@ import (
 )
 ```
 
-Or if you want, you can clone the repository with
+while executing this in a terminal:
+
+```sh
+> cd $GOPATH/src
+> go get "github.com/zombcode/cardamomo"
+```
+
+Or if you prefer, you can clone the repository with:
 
 ```sh
 $ git clone https://github.com/zombcode/cardamomo.git
-````
+```
 
 ### First steps
 
@@ -24,23 +31,23 @@ $ git clone https://github.com/zombcode/cardamomo.git
 
 ##### Basics
 
-For instanciate the **cardamomo** framework in your project, you must write
+In order to instanciate the **cardamomo** framework in your project, you must write:
 
 ```sh
 c := cardamomo.Instance("8000") // 8000 is the port
 ```
 
-at this moment your cardamomo are instanciated. When you are ready, you can do
+At this moment your cardamomo are instanciated. When you are ready, you can do:
 
 ```sh
 c.Run()
 ```
 
-for run the cardamomo http server
+to run the cardamomo http server.
 
 ##### GET
 
-For generate GET patterns you can do
+In order to generate GET patterns you can do:
 
 ```sh
 c.Get("/", func(req cardamomo.Request, res cardamomo.Response) {
@@ -48,11 +55,11 @@ c.Get("/", func(req cardamomo.Request, res cardamomo.Response) {
 })
 ```
 
-you can see, the variable **res** in callback function is for send data to the client.
+As you can see, the variable **res** in the callback function is used to send data to the client.
 
 ##### POST
 
-For generate POST patterns you can do
+In order to generate POST patterns you can do:
 
 ```sh
 c.Post("/post", func(req cardamomo.Request, res cardamomo.Response) {
@@ -60,11 +67,11 @@ c.Post("/post", func(req cardamomo.Request, res cardamomo.Response) {
 })
 ```
 
-you can see, the variable **res** in callback function is for send data to the client.
+As you can see, the variable **res** in callback function is used to send data to the client.
 
 ##### BASE
 
-The **base** is used for GROUP various routes below the same base path.
+The **base** is used to GROUP various routes below the same base path.
 
 ```sh
 c.Base("/base", func(router *cardamomo.Router) {
@@ -76,7 +83,7 @@ c.Base("/base", func(router *cardamomo.Router) {
 
 ##### PARAMETERS
 
-If you want send parameters you can do it with
+If you want to send parameters you can do it with:
 
 ```sh
 c.Post("/post", func(req cardamomo.Request, res cardamomo.Response) {
@@ -85,9 +92,9 @@ c.Post("/post", func(req cardamomo.Request, res cardamomo.Response) {
 })
 ```
 
-this example is with **POST** method but with **GET** is the same way.
+This example use the **POST** method but you can use **GET** is the same way.
 
-Otherwise, you can send parameters into **URL** with
+Otherwise, you can send parameters inside the **URL** with:
 
 ```sh
 c.Get("/routeget2/:param1/and/:param2", func(req cardamomo.Request, res cardamomo.Response) {
@@ -95,13 +102,13 @@ c.Get("/routeget2/:param1/and/:param2", func(req cardamomo.Request, res cardamom
 })
 ```
 
-In this example you can use the **:param1** and **:param2** as variables. For test this use:
+In this example you can use the **:param1** and **:param2** as variables. In order to test this use:
 
 ```sh
 http://localhost:8000/routeget2/theparameter1/and/theparameter2
 ```
 
-In the response you can see
+In the response you can see:
 
 ```sh
 Hello route get 2 with param1 = theparameter1 and param2 = theparameter2!
@@ -109,8 +116,8 @@ Hello route get 2 with param1 = theparameter1 and param2 = theparameter2!
 
 ##### JSON Responses
 
-If you need **JSON** format responses for your **REST API**,
-you can do it following the next code
+If you need **JSON** formatted responses for your **REST API**,
+you can do it like this:
 
 ```sh
 type Box struct {
@@ -144,7 +151,7 @@ c.Get("/routejson", func(req cardamomo.Request, res cardamomo.Response) {
 
 ##### Cookies
 
-If you need cookies, you can do this for add a new cookie
+If you need cookies, you can do this in order to add a new cookie:
 
 ```sh
 c.Get("/setcookie/:key/:value", func(req cardamomo.Request, res cardamomo.Response) {
@@ -158,7 +165,7 @@ c.Get("/setcookie/:key/:value", func(req cardamomo.Request, res cardamomo.Respon
 })
 ```
 
-and if you need get cookie
+and if you need to get a cookie:
 
 ```sh
 c.Get("/getcookie/:key", func(req cardamomo.Request, res cardamomo.Response) {
@@ -170,7 +177,7 @@ c.Get("/getcookie/:key", func(req cardamomo.Request, res cardamomo.Response) {
 })
 ```
 
-at end, if you need delete cookie you can do
+Finally, if you need to delete a cookie you can do this:
 
 ```sh
 c.Get("/deletecookie/:key", func(req cardamomo.Request, res cardamomo.Response) {
@@ -184,23 +191,24 @@ c.Get("/deletecookie/:key", func(req cardamomo.Request, res cardamomo.Response) 
 
 #### Sockets
 
-For start a socket, you need instanciate an **HTTP** server before.
+In order to start a socket, you need to instanciate an **HTTP** server in the
+first place.
 
 ```sh
 c := cardamomo.Instance("8000")
 ```
 
-After that you now can create the **WebSocket** server with
+After that you can now create the **WebSocket** server with:
 
 ```sh
 socket := c.OpenSocket()
 ```
 
-and use the **socket** variable or whatever you want for control your new socket.
+and use the **socket** variable or whatever you want to control your new socket.
 
 ##### Socket base
 
-The base is like **HTTP** base
+The base works the same way as the **HTTP** base:
 
 ```sh
 socket.OnSocketBase("/base1", func(client *cardamomo.SocketClient) {
@@ -208,7 +216,7 @@ socket.OnSocketBase("/base1", func(client *cardamomo.SocketClient) {
 })
 ```
 
-This event is called whenever a new client is connected using the path "base1"
+This event is called whenever a new client is connected using the path "base1":
 
 ##### Socket base actions
 
@@ -220,15 +228,15 @@ socket.OnSocketBase("/base1", func(client *cardamomo.SocketClient) {
 })
 ```
 
-The actions is called when client send a message using the required JSON format:
+The actions is called when the client sends a message using the required JSON format:
 
-> - Action: A string with the action name
-> - Params: A JSON with params that will be send to the action
+> - Action: A string containing the action name
+> - Params: A JSON containing the params that will be sent to the action
 
 ##### Socket send
 
-This action is used with the client variable for sending data to the client websocket,
-for example you can send a message like this
+This action is used with the client variable to send data to the client websocket.
+For example, you can send a message like this:
 
 ```sh
 type MessageParam struct {
@@ -244,10 +252,10 @@ socket.OnSocketBase("/base1", func(client *cardamomo.SocketClient) {
 })
 ```
 
-If you need send **broadcast** to all clients, clients attached to concrete base
-or a concrete client, you can do next
+If you need to send a **broadcast** to all the clients, clients attached to a concrete base
+or a concrete client, you can do this:
 
-For broadcast:
+To broadcast:
 ```sh
 ...
 
@@ -256,7 +264,7 @@ socket.Send("theaction", theparams)
 ...
 ```
 
-For concrete base:
+To a concrete base:
 ```sh
 ...
 
@@ -265,7 +273,7 @@ socket.SendBase("/thebase", "theaction", theparams)
 ...
 ```
 
-For concrete client:
+To a concrete client:
 ```sh
 ...
 
@@ -274,11 +282,11 @@ socket.SendClient("theclientID","theaction", theparams)
 ...
 ```
 
-Go to **cardamomo-examples** for more info about sockets
+Go to **cardamomo-examples** for more info about sockets.
 
 #### Error handler
 
-You can debug errors with the error handler using
+You can debug errors with the error handler using:
 
 ```sh
 c.SetErrorHandler(func (code string, req cardamomo.Request, res cardamomo.Response) {
@@ -290,11 +298,11 @@ c.SetErrorHandler(func (code string, req cardamomo.Request, res cardamomo.Respon
 })
 ```
 
-for example, you can use for 404 errors
+For example, you can use this to send 404 errors.
 
 ##### In future
 
-At this moment the framework is very simple, in the future we want to implement:
+At this moment the framework is very simple. In the future we want to implement:
 
 > - Layout manager
 > - File upload (single and multiple)
