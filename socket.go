@@ -35,7 +35,7 @@ func (s *Socket) Send(action string, params interface{}) {
     _ = index
 
     for index, client := range route.clients {
-      index = 1
+      index = ""
       _ = index
 
       client.Send(action, params)
@@ -50,7 +50,7 @@ func (s *Socket) SendBase(base string, action string, params interface{}) {
 
     if( route.pattern == base ) {
       for index, client := range route.clients {
-        index = 1
+        index = ""
         _ = index
 
         client.Send(action, params)
@@ -69,7 +69,7 @@ func (s *Socket) SendClient(clientID string, action string, params interface{}) 
 
 
       for index, client := range route.clients {
-        index = 1
+        index = ""
         _ = index
 
         if( client.id == clientID ) {
