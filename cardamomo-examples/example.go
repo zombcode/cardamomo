@@ -121,6 +121,10 @@ func main() {
 	socket.OnSocketBase("/base1", func(client *cardamomo.SocketClient) {
 		fmt.Printf("\n\nBase 1 new client!\n\n")
 
+		client.OnSocketAction("onDisconnect", func(sparams map[string]interface{}) {
+			fmt.Printf("\n\nDisconnect!\n\n")
+		})
+
 		client.OnSocketAction("action1", func(sparams map[string]interface{}) {
 			fmt.Printf("\n\nAction 1!\n\n")
 
