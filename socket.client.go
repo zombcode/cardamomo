@@ -82,8 +82,8 @@ func (sc *SocketClient) Listen() {
             var params map[string]interface{}
             err := json.Unmarshal([]byte(msg.Params), &params)
             if err != nil {
-                // Error
-                fmt.Printf("Socket error: %s - 2", err)
+              // Error
+              fmt.Printf("Socket error: %s - 2", err)
             } else {
               action.callback(params)
             }
@@ -107,9 +107,9 @@ func (sc *SocketClient) Send(action string, params interface{}) {
 var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
 func RandStringRunes(n int) string {
-    b := make([]rune, n)
-    for i := range b {
-        b[i] = letterRunes[rand.Intn(len(letterRunes))]
-    }
-    return string(b)
+  b := make([]rune, n)
+  for i := range b {
+    b[i] = letterRunes[rand.Intn(len(letterRunes))]
+  }
+  return string(b)
 }

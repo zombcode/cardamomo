@@ -15,8 +15,7 @@ import (
 while executing this in a terminal:
 
 ```sh
-> cd $GOPATH/src
-> go get "github.com/zombcode/cardamomo"
+$ go get "github.com/zombcode/cardamomo"
 ```
 
 Or if you prefer, you can clone the repository with:
