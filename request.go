@@ -66,6 +66,14 @@ func (r *Request) GetParam(key string, defaultValue string) string {
    return defaultValue
 }
 
+func (r *Request) GetParamJSON(key string, defaultValue interface{}) interface{} {
+   if param, ok := r.jsonparams[key]; ok {
+    return param
+   }
+
+   return defaultValue
+}
+
 func (r * Request) GetFile(key string) (multipart.File, *multipart.FileHeader, error) {
   return r.httprequest.FormFile(key)
 }
