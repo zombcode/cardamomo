@@ -56,8 +56,11 @@ func (r *Request) GetParam(key string, defaultValue string) string {
      return param
    }
 
-   if param, ok := r.jsonparams[key]; ok {
-     return param
+   if paraminterface, ok := r.jsonparams[key]; ok {
+     param, err := json.Marshal(paraminterface)
+     if(err == nil) {
+       return string(param)
+     }
    }
 
    return defaultValue
