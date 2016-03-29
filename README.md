@@ -113,6 +113,15 @@ In the response you can see:
 Hello route get 2 with param1 = theparameter1 and param2 = theparameter2!
 ```
 
+If you use JSON for sending parameters to the server, you can use
+
+```sh
+req.GetParamJSON("username", cardamomo.JSONC{}).(string)
+```
+
+for example for obtain a parameter "username" that is a "string" with a default
+empty JSON.
+
 ##### JSON Responses
 
 If you need **JSON** formatted responses for your **REST API**,
