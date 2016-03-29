@@ -7,26 +7,43 @@ import (
   "strings"
   "io"
   "os"
+  "encoding/json"
 )
 
 type Request struct {
   w http.ResponseWriter
   httprequest *http.Request
   params map[string]string
+  jsonparams JSONC
 }
 
 func NewRequest(w http.ResponseWriter, req *http.Request, route *Route) Request {
   req.ParseForm()
 
+  // JSON params
+  jsonparams := JSONC{}
+
+  if(strings.Contains(req.Header.Get("Content-Type"), "application/json")) {
+    decoder := json.NewDecoder(req.Body)
+    var t JSONC
+    err := decoder.Decode(&t)
+    if err == nil {
+      jsonparams = t
+    }
+  }
+
+  // Multipart params
   if(strings.Contains(req.Header.Get("Content-Type"), "multipart/form-data")) {
     req.ParseMultipartForm(32 << 20)
   }
 
+  // Route params
+  params := make(map[string]string)
   if( route != nil ) {
-    return Request{w: w, httprequest: req, params: route.params}
+    params = route.params
   }
 
-  return Request{w: w, httprequest: req}
+  return Request{w: w, httprequest: req, params: params, jsonparams: jsonparams}
 }
 
 func (r *Request) GetParam(key string, defaultValue string) string {
