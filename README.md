@@ -1,6 +1,5 @@
 # cardamomo
 
-**Warning!** This project is under development and at this time can be unstable!
 
 ### Installation
 
@@ -316,4 +315,4 @@ At this moment the framework is very simple. In the future we want to implement:
 > - File upload (single and multiple)
 
 ### Version
-**Alpha - 0.0.1**
+**Beta - 1.0.0**
