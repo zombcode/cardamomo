@@ -46,6 +46,10 @@ func NewRequest(w http.ResponseWriter, req *http.Request, route *Route) Request 
   return Request{w: w, httprequest: req, params: params, jsonparams: jsonparams}
 }
 
+func (r *Request) OriginalRequest() *http.Request {
+  return r.httprequest
+}
+
 func (r *Request) GetParam(key string, defaultValue string) string {
    if param, ok := r.params[key]; ok {
      return param

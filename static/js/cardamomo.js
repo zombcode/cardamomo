@@ -39,6 +39,15 @@ var Cardamomo = function() {
             }
           } catch(e) {}
         }
+
+        _socket.onclose = () => {
+          console.log("Disconnect!");
+          //try to reconnect in 5 seconds
+          setTimeout(
+          function () {
+            self.openSocket(this.path);
+          }, 5000);
+        };
       };
     }
 
