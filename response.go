@@ -8,10 +8,11 @@ import (
 
 type Response struct {
   Writer http.ResponseWriter
+  httprequest *http.Request
 }
 
-func NewResponse(w http.ResponseWriter) Response {
-  return Response{Writer: w}
+func NewResponse(w http.ResponseWriter, req *http.Request,) Response {
+  return Response{Writer: w, httprequest: req}
 }
 
 func (r *Response) Send(m string) {
@@ -27,5 +28,5 @@ func (r *Response) SendJSON(data interface{}) {
 }
 
 func (r *Response) Render(view string, data interface{}) {
-
+  http.ServeFile(r.Writer, r.httprequest, view)
 }

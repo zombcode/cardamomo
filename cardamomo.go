@@ -101,7 +101,7 @@ func (c *Cardamomo) Run() {
 	      	fmt.Printf("\n %s: %s => %s \n", req.Method, currentRoute.pattern, req.URL.Path)
 				}
 	      request := NewRequest(w, req, currentRoute)
-	      response := NewResponse(w)
+	      response := NewResponse(w, req)
 	      currentRoute.callback(request, response)
 	    } else {
 				if( c.Config["production"]["debug"] == "true" ) {
@@ -110,7 +110,7 @@ func (c *Cardamomo) Run() {
 
 				if( c.errorHandler != nil ) {
 					request := NewRequest(w, req, nil)
-		      response := NewResponse(w)
+		      response := NewResponse(w, req)
 					c.errorHandler("404", request, response)
 				}
 			}
@@ -121,7 +121,7 @@ func (c *Cardamomo) Run() {
 
 			if( c.errorHandler != nil ) {
 				request := NewRequest(w, req, nil)
-	      response := NewResponse(w)
+	      response := NewResponse(w, req)
 				c.errorHandler("404", request, response)
 			}
 		}
