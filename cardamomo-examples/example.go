@@ -118,6 +118,23 @@ func main() {
 	// Sockets
 
 	socket := c.OpenSocket()
+  socket.Cluster(cardamomo.SocketClusterParams{ // You can use this lines for cluster testing
+    Hosts: []cardamomo.SocketClusterHost{ // Write a list of ALL servers included in the cluster
+      cardamomo.SocketClusterHost{
+        Host: "192.168.0.214", // Use the server 1 IP
+        Port: "8000", // Use the server 1 PORT
+        Master: true, // Only ONE server can be MASTER
+      },
+      cardamomo.SocketClusterHost{
+        Host: "192.168.0.214", // Use the server 2 IP
+        Port: "8001", // Use the server 2 PORT
+        Master: false, // Only ONE server can be MASTER
+      },
+    },
+    Password: "examplepass",
+  })
+  socket.SendClient("as12df34gh56", "testing", cardamomo.JSONC{"foo":"bar"}); // This is for testing communication between sockets, you can use a real client ID for that
+
 	socket.OnSocketBase("/base1", func(client *cardamomo.SocketClient) {
 		fmt.Printf("\n\nBase 1 new client!\n\n")
 

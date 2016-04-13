@@ -289,6 +289,34 @@ socket.SendClient("theclientID","theaction", theparams)
 ...
 ```
 
+##### Socket cluster
+
+If you need scalability in your system and you use sockets, THIS IS YOUR DAY! You can use
+the cluster configuration to share sockets between servers. In order to do that, you can do this:
+
+```sh
+socket := c.OpenSocket()
+socket.Cluster(cardamomo.SocketClusterParams{ // You can use this lines for cluster testing
+  Hosts: []cardamomo.SocketClusterHost{ // Write a list of ALL servers included in the cluster
+    cardamomo.SocketClusterHost{
+      Host: "192.168.0.214", // Use the server 1 IP
+      Port: "8000", // Use the server 1 PORT
+      Master: true, // Only ONE server can be MASTER
+    },
+    cardamomo.SocketClusterHost{
+      Host: "192.168.0.214", // Use the server 2 IP
+      Port: "8001", // Use the server 2 PORT
+      Master: false, // Only ONE server can be MASTER
+    },
+  },
+  Password: "examplepass",
+})
+socket.SendClient("as12df34gh56", "testing", cardamomo.JSONC{"foo":"bar"}); // This is for testing the communication between sockets, you can use a real client ID for that
+```
+
+In this example you can connect to SERVER 1 and use SendClient with SERVER 2 user id to send
+info between servers.
+
 Go to **cardamomo-examples** for more info about sockets.
 
 #### Error handler

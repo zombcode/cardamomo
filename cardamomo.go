@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"runtime"
   "path"
+  "net"
 	"net/http"
 	"regexp"
 	"strings"
@@ -29,6 +30,26 @@ func Instance(port string) Cardamomo {
 	config["production"] = make(map[string]string)
 	config["production"]["debug"] = "true"
 
+  // Get server IP
+  var ip net.IP
+  ifaces, err := net.Interfaces()
+  if err == nil {
+    for _, i := range ifaces {
+      addrs, err := i.Addrs()
+      if err == nil {
+        for _, addr := range addrs {
+          switch v := addr.(type) {
+          case *net.IPNet:
+            ip = v.IP
+          case *net.IPAddr:
+            ip = v.IP
+          }
+        }
+      }
+    }
+  }
+  config["server"]["ip"] = ip.String()
+
   r := NewRouter("/")
 
   return Cardamomo{router: r, Config: config}
@@ -49,6 +70,7 @@ func (c *Cardamomo) SetErrorHandler(callback ErrorFunc) {
 // HTTP Server
 
 func (c *Cardamomo) Run() {
+  // Run server
 	_, filename, _, ok := runtime.Caller(0)
   if !ok {
       panic("No caller information")
@@ -165,7 +187,7 @@ func (c *Cardamomo) Run() {
 	}
 
 	// Start HTTP server
-	fmt.Printf("\n * Starting HTTP server at: http://localhost:%s\n", c.Config["server"]["port"])
+	fmt.Printf("\n * Starting HTTP server at: http://%s:%s\n", c.Config["server"]["ip"], c.Config["server"]["port"])
   http.ListenAndServe(":" + c.Config["server"]["port"], nil)
 }
 
@@ -202,7 +224,7 @@ func (c *Cardamomo) Post(pattern string, callback ReqFunc) {
 // Socket
 
 func (c *Cardamomo) OpenSocket() *Socket {
-  return NewSocket()
+  return NewSocket(c)
 }
 
 func (c *Cardamomo) GetSocket() *Socket {
