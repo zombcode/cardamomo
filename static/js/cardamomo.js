@@ -58,7 +58,7 @@ var Cardamomo = function() {
     function send(action, params) {
       var message = {
           "action": action,
-          "params": params
+          "params": JSON.stringify(params)
       };
 
       message = JSON.stringify(message);

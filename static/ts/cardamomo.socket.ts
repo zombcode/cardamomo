@@ -43,22 +43,22 @@ export class CardamomoSocket {
           }
         } catch(e) {}
       }
+    };
 
-      this.ws.onclose = () => {
-        console.log("Disconnect!");
-        //try to reconnect in 5 seconds
-        setTimeout(
-        () => {
-          this.openSocket(this.path);
-        },5000);
-      };
+    this.ws.onclose = () => {
+      console.log("Disconnect!");
+      //try to reconnect in 5 seconds
+      setTimeout(
+      () => {
+        this.openSocket(this.path);
+      },5000);
     };
   }
 
   send(action, params) {
     var message = {
         "action": action,
-        "params": params
+        "params": JSON.stringify(params)
     };
 
     var messageStr = JSON.stringify(message);

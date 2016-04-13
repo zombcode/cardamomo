@@ -13,7 +13,7 @@
       }
     };
 
-    socket.send("action1", JSON.stringify(params));
+    socket.send("action1", params);
 
     socket.on("action1", function(params) {
       console.log("On action1!");
