@@ -171,7 +171,7 @@ func (s *Socket) SendClient(clientID string, action string, params interface{}) 
 
 // Utils
 
-func (s *Socket) clientExists(clientID string) bool {
+func (s *Socket) ClientExists(clientID string) bool {
   exists := false
 
   RoutesLoop:
