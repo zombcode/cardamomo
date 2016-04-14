@@ -216,9 +216,9 @@ func (c *Cardamomo) GetSocket() *Socket {
 }
 
 // Utils
-var hostIP string
+var hostIP string = ""
 func GetHostIP() string {
-  if hostIP == nil {
+  if hostIP == "" {
     var ip net.IP
     ifaces, err := net.Interfaces()
     if err == nil {
