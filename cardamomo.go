@@ -216,25 +216,31 @@ func (c *Cardamomo) GetSocket() *Socket {
 }
 
 // Utils
-
+var hostIP string
 func GetHostIP() string {
-  var ip net.IP
-  ifaces, err := net.Interfaces()
-  if err == nil {
-    for _, i := range ifaces {
-      addrs, err := i.Addrs()
-      if err == nil {
-        for _, addr := range addrs {
-          switch v := addr.(type) {
-          case *net.IPNet:
-            ip = v.IP
-          case *net.IPAddr:
-            ip = v.IP
+  if hostIP == nil {
+    var ip net.IP
+    ifaces, err := net.Interfaces()
+    if err == nil {
+      for _, i := range ifaces {
+        addrs, err := i.Addrs()
+        if err == nil {
+          for _, addr := range addrs {
+            switch v := addr.(type) {
+            case *net.IPNet:
+              ip = v.IP
+            case *net.IPAddr:
+              ip = v.IP
+            }
           }
         }
       }
     }
-  }
 
-  return ip.String()
+    hostIP = ip.String()
+
+    return hostIP
+  } else {
+    return hostIP
+  }
 }
