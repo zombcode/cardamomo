@@ -31,24 +31,8 @@ func Instance(port string) Cardamomo {
 	config["production"]["debug"] = "true"
 
   // Get server IP
-  var ip net.IP
-  ifaces, err := net.Interfaces()
-  if err == nil {
-    for _, i := range ifaces {
-      addrs, err := i.Addrs()
-      if err == nil {
-        for _, addr := range addrs {
-          switch v := addr.(type) {
-          case *net.IPNet:
-            ip = v.IP
-          case *net.IPAddr:
-            ip = v.IP
-          }
-        }
-      }
-    }
-  }
-  config["server"]["ip"] = ip.String()
+  ip := GetHostIP()
+  config["server"]["ip"] = ip
 
   r := NewRouter("/")
 
@@ -229,4 +213,28 @@ func (c *Cardamomo) OpenSocket() *Socket {
 
 func (c *Cardamomo) GetSocket() *Socket {
 	return c.socket
+}
+
+// Utils
+
+func GetHostIP() string {
+  var ip net.IP
+  ifaces, err := net.Interfaces()
+  if err == nil {
+    for _, i := range ifaces {
+      addrs, err := i.Addrs()
+      if err == nil {
+        for _, addr := range addrs {
+          switch v := addr.(type) {
+          case *net.IPNet:
+            ip = v.IP
+          case *net.IPAddr:
+            ip = v.IP
+          }
+        }
+      }
+    }
+  }
+
+  return ip.String()
 }

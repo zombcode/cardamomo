@@ -79,20 +79,6 @@ func (s *Socket) Send(action string, params interface{}) {
   }
 }
 
-func (s *Socket) sendCluster(action string, params interface{}) {
-  for index, route := range s.routes {
-    index = 1
-    _ = index
-
-    for index, client := range route.clients {
-      index = ""
-      _ = index
-
-      client.Send(action, params)
-    }
-  }
-}
-
 func (s *Socket) SendBase(base string, action string, params interface{}) {
   for index, route := range s.routes {
     index = 1
@@ -137,24 +123,6 @@ func (s *Socket) SendBase(base string, action string, params interface{}) {
   }
 }
 
-func (s *Socket) sendBaseCluster(base string, action string, params interface{}) {
-  for index, route := range s.routes {
-    index = 1
-    _ = index
-
-    if( route.pattern == base ) {
-      for index, client := range route.clients {
-        index = ""
-        _ = index
-
-        client.Send(action, params)
-      }
-
-      break
-    }
-  }
-}
-
 func (s *Socket) SendClient(clientID string, action string, params interface{}) {
   RoutesLoop:
     for index, route := range s.routes {
@@ -169,6 +137,7 @@ func (s *Socket) SendClient(clientID string, action string, params interface{}) 
           client.Send(action, params)
 
           break RoutesLoop
+          break
         }
       }
     }
@@ -196,6 +165,65 @@ func (s *Socket) SendClient(clientID string, action string, params interface{}) 
           fmt.Printf("Send failed: %s\n", err.Error())
         }
       }
+    }
+  }
+}
+
+// Utils
+
+func (s *Socket) clientExists(clientID string) bool {
+  exists := false
+
+  RoutesLoop:
+    for index, route := range s.routes {
+      index = 1
+      _ = index
+
+      for index, client := range route.clients {
+        index = ""
+        _ = index
+
+        if( client.id == clientID ) {
+          exists = true
+          break RoutesLoop
+          break
+        }
+      }
+    }
+
+  return exists
+}
+
+// Cluster
+
+func (s *Socket) sendCluster(action string, params interface{}) {
+  for index, route := range s.routes {
+    index = 1
+    _ = index
+
+    for index, client := range route.clients {
+      index = ""
+      _ = index
+
+      client.Send(action, params)
+    }
+  }
+}
+
+func (s *Socket) sendBaseCluster(base string, action string, params interface{}) {
+  for index, route := range s.routes {
+    index = 1
+    _ = index
+
+    if( route.pattern == base ) {
+      for index, client := range route.clients {
+        index = ""
+        _ = index
+
+        client.Send(action, params)
+      }
+
+      break
     }
   }
 }
