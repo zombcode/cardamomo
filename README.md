@@ -169,6 +169,15 @@ c.Get("/routejson", func(req cardamomo.Request, res cardamomo.Response) {
 })
 ```
 
+or if you prefer, you can use the object "JSONC" stored in the cardamomo package.
+
+```sh
+cardamomo.JSONC{
+  "foo": "bar",
+  "bar": "foo",
+}
+```
+
 ##### Cookies
 
 If you need cookies, you can do this in order to add a new cookie:
