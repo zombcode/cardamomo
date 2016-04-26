@@ -121,6 +121,19 @@ req.GetParamJSON("username", cardamomo.JSONC{}).(string)
 for example for obtain a parameter "username" that is a "string" with a default
 empty JSON.
 
+##### REGEX
+
+You can use REGEX into routes, for that you need to insert the regex between "{{theregex}}", for example:
+
+```sh
+c.Get("/routeget3/{{a([a-zA-Z0-9]+)b$}}", func(req cardamomo.Request, res cardamomo.Response) {
+  res.Send("Hello! This route uses REGEX! Only URL that use parameters between 'a' and 'b'");
+})
+```
+
+With this lines, you can catch all request with the pattern "/routeget3/" followed with characters
+between 0-9, a-z, A-Z enclosed with "a" and "b" characters.
+
 ##### JSON Responses
 
 If you need **JSON** formatted responses for your **REST API**,
