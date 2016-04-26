@@ -6,6 +6,8 @@ import (
   "encoding/json"
   "html/template"
   "strings"
+  "io/ioutil"
+  "log"
 )
 
 type Response struct {
@@ -29,21 +31,25 @@ func (r *Response) SendJSON(data interface{}) {
   io.WriteString(r.Writer, string(result))
 }
 
-func (r *Response) Render(view string, data interface{}) {
-  //http.ServeFile(r.Writer, r.httprequest, view)
-  renderTemplate(r.Writer, view, data)
-}
-
 var templateMap = template.FuncMap{
-	"Upper": func(s string) string {
-		return strings.ToUpper(s)
-	},
+  "Upper": func(s string) string {
+    return strings.ToUpper(s)
+  },
 }
 var templates = template.New("").Funcs(templateMap)
 
-func renderTemplate(w http.ResponseWriter, tmpl string, p interface{}) {
-	err := templates.ExecuteTemplate(w, tmpl, p)
+func (r *Response) Render(path string, data interface{}) {
+  //http.ServeFile(r.Writer, r.httprequest, path)
+  //renderTemplate(r.Writer, path, data)
+
+  bytes, err := ioutil.ReadFile(path)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Panicf("Unable to parse: path=%s, err=%s", path, err)
+	}
+	templates.New(path).Parse(string(bytes))
+
+  err = templates.ExecuteTemplate(r.Writer, path, data)
+	if err != nil {
+		http.Error(r.Writer, err.Error(), http.StatusInternalServerError)
 	}
 }

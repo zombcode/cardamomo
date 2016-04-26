@@ -42,6 +42,15 @@ func main() {
     res.Send("Hello! This route uses REGEX! Only URL that use parameters between 'a' and 'b'");
   })
 
+  c.Get("/rendertest", func(req cardamomo.Request, res cardamomo.Response) {
+    res.Render("socket.html", cardamomo.JSONC{
+      "data": cardamomo.JSONC{
+        "title": "Hello world!",
+        "desc": "Lorem ipsum!",
+      },
+    });
+  })
+
   c.Get("/routejson", func(req cardamomo.Request, res cardamomo.Response) {
     boxsize := BoxSize {
       Width:  10,
