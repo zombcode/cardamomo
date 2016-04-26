@@ -4,6 +4,8 @@ import (
   "io"
   "net/http"
   "encoding/json"
+  "html/template"
+  "strings"
 )
 
 type Response struct {
@@ -28,5 +30,20 @@ func (r *Response) SendJSON(data interface{}) {
 }
 
 func (r *Response) Render(view string, data interface{}) {
-  http.ServeFile(r.Writer, r.httprequest, view)
+  //http.ServeFile(r.Writer, r.httprequest, view)
+  renderTemplate(r.Writer, view, data)
+}
+
+var templateMap = template.FuncMap{
+	"Upper": func(s string) string {
+		return strings.ToUpper(s)
+	},
+}
+var templates = template.New("").Funcs(templateMap)
+
+func renderTemplate(w http.ResponseWriter, tmpl string, p interface{}) {
+	err := templates.ExecuteTemplate(w, tmpl, p)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
