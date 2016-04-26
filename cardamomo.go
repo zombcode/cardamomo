@@ -162,7 +162,8 @@ func (c *Cardamomo) Run() {
 				_ = index
 
 				route.params[strings.Replace(param, "/:", "", -1)] = ""
-				route.patternRegex = strings.Replace(route.patternRegex, param, "/([a-zA-Z0-9]+)", -1)
+				//route.patternRegex = strings.Replace(route.patternRegex, param, "/([a-zA-Z0-9]+)", -1)
+        route.patternRegex = strings.Replace(route.patternRegex, param, "/([a-zA-Z0-9!@#$&()\\-`.+,/\"]+)", -1)
 			}
 
 			//fmt.Printf("   - Compiled to: %s ✓\n", route.patternRegex)
