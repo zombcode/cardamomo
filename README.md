@@ -364,5 +364,10 @@ At this moment the framework is very simple. In the future we want to implement:
 > - Layout manager
 > - File upload (single and multiple)
 
+### New documentation
+
+> - Redirect HTTP
+> - Render and SendFile
+
 ### Version
 **Beta - 1.0.0**

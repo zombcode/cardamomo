@@ -31,9 +31,18 @@ func (r *Response) SendJSON(data interface{}) {
   io.WriteString(r.Writer, string(result))
 }
 
+// Redirect
+func (r *Response) Redirect(url string, code int) {
+  http.Redirect(r.Writer, r.httprequest, url, code)
+}
+
+// Send file
+
 func (r *Response) SendFile(path string) {
   http.ServeFile(r.Writer, r.httprequest, path)
 }
+
+// Render
 
 var templateMap = template.FuncMap{
   "Upper": func(s string) string {
