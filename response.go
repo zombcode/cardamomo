@@ -31,6 +31,10 @@ func (r *Response) SendJSON(data interface{}) {
   io.WriteString(r.Writer, string(result))
 }
 
+func (r *Response) SendFile(path string) {
+  http.ServeFile(r.Writer, r.httprequest, path)
+}
+
 var templateMap = template.FuncMap{
   "Upper": func(s string) string {
     return strings.ToUpper(s)
@@ -39,8 +43,6 @@ var templateMap = template.FuncMap{
 var templates = template.New("").Funcs(templateMap)
 
 func (r *Response) Render(path string, data interface{}) {
-  //http.ServeFile(r.Writer, r.httprequest, path)
-  //renderTemplate(r.Writer, path, data)
 
   bytes, err := ioutil.ReadFile(path)
 	if err != nil {
