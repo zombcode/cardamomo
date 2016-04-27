@@ -38,7 +38,7 @@ func main() {
     res.Send("Hello route get 1 with param1 = " + req.GetParam("param1", "") + " and param2 = " + req.GetParam("param2", "") + "!");
   })
 
-  c.Get("/routeget3/{{a([a-zA-Z0-9]+)b$}}", func(req cardamomo.Request, res cardamomo.Response) {
+  c.Get("/routeget3/:param/{{a([a-zA-Z0-9]+)b$}}", func(req cardamomo.Request, res cardamomo.Response) {
     res.Send("Hello! This route uses REGEX! Only URL that use parameters between 'a' and 'b'");
   })
 

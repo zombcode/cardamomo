@@ -149,8 +149,8 @@ func (c *Cardamomo) Run() {
 	fmt.Printf("\n * Compiling routes params...\n")
 
 	for index, route := range c.compiledRoutes {
-		index = 1
-		_ = index
+    index = 1
+    _ = index
 
 		r, _ := regexp.Compile("/:([a-zA-Z0-9]+)")
 		if(r.MatchString(route.pattern)) {
@@ -163,7 +163,6 @@ func (c *Cardamomo) Run() {
 
 				route.params[strings.Replace(param, "/:", "", -1)] = ""
         route.patternRegex = strings.Replace(route.patternRegex, param, "/([a-zA-Z0-9!@#$&()\\-`.+,/\"]+)", -1)
-        c.compiledRoutes[index].pattern = strings.Replace(route.patternRegex, param, "/([a-zA-Z0-9!@#$&()\\-`.+,/\"]+)", -1)
 			}
 
 			fmt.Printf("\n   + Compiling route params for: %s ✓\n", route.pattern)
@@ -180,7 +179,6 @@ func (c *Cardamomo) Run() {
 		if(r.MatchString(route.pattern)) {
 			params := r.FindAllString(route.pattern, -1)
 
-			route.patternRegex = route.pattern
 			for index, param := range params {
 				index = 1
 				_ = index
