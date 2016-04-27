@@ -40,7 +40,7 @@ var Cardamomo = function() {
           } catch(e) {}
         }
 
-        _socket.onclose = () => {
+        _socket.onclose = function() {
           console.log("Disconnect!");
           //try to reconnect in 5 seconds
           setTimeout(
