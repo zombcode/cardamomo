@@ -23,27 +23,27 @@ export class CardamomoSocket {
     this.ws = new WebSocket(this.path);
     this.ws.onopen = (event) => {
       this.send("CardamomoSocketInit", "{}");
+    };
 
-      this.ws.onmessage = (event) => {
-        try {
-          var data = JSON.parse(event.data);
-          if( data.Action == "CardamomoSocketInit" ) {
-            this.id = data.Params.id;
+    this.ws.onmessage = (event) => {
+      try {
+        var data = JSON.parse(event.data);
+        if( data.Action == "CardamomoSocketInit" ) {
+          this.id = data.Params.id;
 
-            if(this._onOpen != null) {
-              this._onOpen();
-            }
-          } else {
-            for( var i in this._actions ) {
-              var action = this._actions[i];
-              if( action.action == data.Action ) {
-                action.callback(data.Params);
-              }
+          if(this._onOpen != null) {
+            this._onOpen();
+          }
+        } else {
+          for( var i in this._actions ) {
+            var action = this._actions[i];
+            if( action.action == data.Action ) {
+              action.callback(data.Params);
             }
           }
-        } catch(e) {}
-      }
-    };
+        }
+      } catch(e) {}
+    }
 
     this.ws.onclose = () => {
       console.log("Disconnect!");

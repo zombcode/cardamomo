@@ -14,22 +14,22 @@
     };
 
     socket.send("action1", params);
-
-    socket.on("action1", function(params) {
-      console.log("On action1!");
-      console.log(params);
-    })
-
-    socket.on("chat", function(params) {
-      console.log("On chat!");
-      console.log(params);
-    })
-
-    socket.on("broadcast", function(params) {
-      console.log("On broadcast!");
-      console.log(params);
-    })
   });
+
+  socket.on("action1", function(params) {
+    console.log("On action1!");
+    console.log(params);
+  })
+
+  socket.on("chat", function(params) {
+    console.log("On chat!");
+    console.log(params);
+  })
+
+  socket.on("broadcast", function(params) {
+    console.log("On broadcast!");
+    console.log(params);
+  })
 </script>
 
 <h1>{{ .data.title }}</h1>

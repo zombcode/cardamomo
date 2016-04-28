@@ -2,7 +2,7 @@ var Cardamomo = function() {
 
   this.socket = function(path) {
 
-    var _socket
+    var _socket = null;
     var _actions = [];
     var _onOpen = null;
     var self = this;
@@ -15,36 +15,38 @@ var Cardamomo = function() {
       path = "ws://" + path;
 
       _socket = new WebSocket(path);
+
       _socket.onopen = (function (event) {
         self.send("CardamomoSocketInit", "{}");
+      });
 
-        _socket.onmessage = function (event) {
-          try {
-            var data = JSON.parse(event.data);
-            if( data.Action == "CardamomoSocketInit" ) {
-              self.id = data.Params.id;
+      _socket.onmessage = function (event) {
+        try {
+          var data = JSON.parse(event.data);
+          if( data.Action == "CardamomoSocketInit" ) {
+            self.id = data.Params.id;
 
-              if(_onOpen != null) {
-                _onOpen();
-              }
-            } else {
-              for( var i in _actions ) {
-                var action = _actions[i];
-                if( action.action == data.Action ) {
-                  action.callback(data.Params);
-                }
+            if(_onOpen != null) {
+              _onOpen();
+            }
+          } else {
+            for( var i in _actions ) {
+              var action = _actions[i];
+              if( action.action == data.Action ) {
+                action.callback(data.Params);
               }
             }
-          } catch(e) {}
-        }
+          }
+        } catch(e) {}
+      }
 
-        _socket.onclose = (function() {
-          console.log("Disconnect!");
-          //try to reconnect in 5 seconds
-          setTimeout((function () {
-            self.openSocket(path);
-          }).bind(path), 5000);
-        }).bind(path);
+      _socket.onclose = (function() {
+        console.log("Disconnect!");
+        //try to reconnect in 5 seconds
+        setTimeout((function () {
+          self._socket = null;
+          self.openSocket(path);
+        }).bind(path), 5000);
       }).bind(path);
     }
 
