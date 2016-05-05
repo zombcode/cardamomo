@@ -47,7 +47,7 @@ export class CardamomoSocket {
     this.ws.onclose = () => {
       console.log("Disconnect!");
       //try to reconnect in 5 seconds
-      if( destroyed == false ) {
+      if( this.destroyed == false ) {
         setTimeout(
         () => {
           this.openSocket(this.path);
