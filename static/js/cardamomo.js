@@ -3,7 +3,7 @@ var Cardamomo = function() {
   this.socket = function(path) {
 
     var _socket = null;
-    var _actions = [];
+    var _actions = {};
     var _onOpen = null;
     var self = this;
 
@@ -30,11 +30,8 @@ var Cardamomo = function() {
               _onOpen();
             }
           } else {
-            for( var i in _actions ) {
-              var action = _actions[i];
-              if( action.action == data.Action ) {
-                action.callback(data.Params);
-              }
+            if( data.Action in _actions ) {
+              _actions[data.Action](data.Params);
             }
           }
         } catch(e) {}
@@ -51,7 +48,7 @@ var Cardamomo = function() {
     }
 
     function onMessage(action, callback) {
-      _actions.push({"action": action, "callback": callback});
+      _actions[action] = callback;
     }
 
     function send(action, params) {

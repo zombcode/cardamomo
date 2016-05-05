@@ -5,7 +5,7 @@ export class CardamomoSocket {
 
   private id : string;
 
-  private _actions = [];
+  private _actions = {};
   private _onOpen = null;
 
   constructor(path : string) {
@@ -35,11 +35,8 @@ export class CardamomoSocket {
             this._onOpen();
           }
         } else {
-          for( var i in this._actions ) {
-            var action = this._actions[i];
-            if( action.action == data.Action ) {
-              action.callback(data.Params);
-            }
+          if( data.Action in this._actions ) {
+            this._actions[data.Action](data.Params);
           }
         }
       } catch(e) {}
@@ -66,7 +63,7 @@ export class CardamomoSocket {
   }
 
   on = (action, callback) => {
-    this._actions.push({"action": action, "callback": callback});
+    this._actions[action] = callback;
   }
 
   onOpen = (callback) => {
