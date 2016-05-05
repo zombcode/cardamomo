@@ -2,6 +2,9 @@ var Cardamomo = function() {
 
   this.socket = function(path) {
 
+    var id = "";
+    var destroyed = false;
+
     var _socket = null;
     var _actions = {};
     var _onOpen = null;
@@ -14,6 +17,7 @@ var Cardamomo = function() {
       path = path.replace('wss://', '');
       path = "ws://" + path;
 
+      self.destroyed = false;
       _socket = new WebSocket(path);
 
       _socket.onopen = (function (event) {
@@ -40,10 +44,12 @@ var Cardamomo = function() {
       _socket.onclose = (function() {
         console.log("Disconnect!");
         //try to reconnect in 5 seconds
-        setTimeout((function () {
-          self._socket = null;
-          self.openSocket(path);
-        }).bind(path), 5000);
+        if( self.destroyed == false ) {
+          setTimeout((function () {
+            self._socket = null;
+            self.openSocket(path);
+          }).bind(path), 5000);
+        }
       }).bind(path);
     }
 
@@ -59,6 +65,11 @@ var Cardamomo = function() {
 
       message = JSON.stringify(message);
       _socket.send(message);
+    }
+
+    function destroy() {
+      self.destroyed = true;
+      self._socket.close();
     }
 
     this.onOpen = function(callback) {

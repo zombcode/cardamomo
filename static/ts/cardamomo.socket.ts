@@ -4,6 +4,7 @@ export class CardamomoSocket {
   private ws = null;
 
   private id : string;
+  private destroyed : boolean;
 
   private _actions = {};
   private _onOpen = null;
@@ -19,6 +20,7 @@ export class CardamomoSocket {
     path = path.replace('wss://', '');
     path = "ws://" + path;
     this.path = path;
+    this.destroyed = false;
 
     this.ws = new WebSocket(this.path);
     this.ws.onopen = (event) => {
@@ -45,10 +47,12 @@ export class CardamomoSocket {
     this.ws.onclose = () => {
       console.log("Disconnect!");
       //try to reconnect in 5 seconds
-      setTimeout(
-      () => {
-        this.openSocket(this.path);
-      },5000);
+      if( destroyed == false ) {
+        setTimeout(
+        () => {
+          this.openSocket(this.path);
+        },5000);
+      }
     };
   }
 
@@ -60,6 +64,11 @@ export class CardamomoSocket {
 
     var messageStr = JSON.stringify(message);
     this.ws.send(messageStr);
+  }
+
+  destroy() {
+    this.destroyed = true;
+    this.ws.close();
   }
 
   on = (action, callback) => {
