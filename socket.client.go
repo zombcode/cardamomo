@@ -67,11 +67,13 @@ func (sc *SocketClient) Listen() {
       fmt.Printf("Socket error: %s - 1", err)
     } else {
       // Send initial data
-      if( msg.Action == "CardamomoSocketInit" ) {
+      if msg.Action == "CardamomoSocketInit" {
         params := make(map[string]interface{})
         params["id"] = sc.GetID()
 
         sc.Send("CardamomoSocketInit", params)
+      } else if msg.Action == "CardamomoPing" {
+        sc.Send("CardamomoPong", make(map[string]interface{}))
       } else {
         // Common actions
         for index, action := range sc.actions {

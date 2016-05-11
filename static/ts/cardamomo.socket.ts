@@ -4,12 +4,14 @@ export class CardamomoSocket {
   private ws = null;
 
   private id : string;
+  public pingTime : Number;
   private destroyed : boolean;
 
   private _actions = {};
   private _onOpen = null;
 
   constructor(path : string) {
+    this.pingTime = 10000;
     this.openSocket(path);
   }
 
@@ -36,6 +38,10 @@ export class CardamomoSocket {
           if(this._onOpen != null) {
             this._onOpen();
           }
+
+          this.ping();
+        } else if( data.Action == "CardamomoPong" ) {
+          // Pong
         } else {
           if( data.Action in this._actions ) {
             this._actions[data.Action](data.Params);
@@ -64,6 +70,16 @@ export class CardamomoSocket {
 
     var messageStr = JSON.stringify(message);
     this.ws.send(messageStr);
+  }
+
+  ping() {
+    if( this.destroyed == false ) {
+      this.send("CardamomoPing", "{}");
+
+      setTimeout(function () {
+        this.ping();
+      }, this.pingTime);
+    }
   }
 
   destroy() {

@@ -33,6 +33,10 @@ var Cardamomo = function() {
             if(_onOpen != null) {
               _onOpen();
             }
+
+            self.ping();
+          } else if( data.Action == "CardamomoPong" ) {
+            // Pong
           } else {
             if( data.Action in _actions ) {
               _actions[data.Action](data.Params);
@@ -67,6 +71,16 @@ var Cardamomo = function() {
       _socket.send(message);
     }
 
+    function ping() {
+      if( self.destroyed == false ) {
+        self.send("CardamomoPing", "{}");
+
+        setTimeout(function () {
+          self.ping();
+        }, self.pingTime);
+      }
+    }
+
     function destroy() {
       self.destroyed = true;
       self._socket.close();
@@ -77,6 +91,8 @@ var Cardamomo = function() {
     };
     this.on = onMessage;
     this.send = send;
+    this.ping = ping;
+    this.pingTime = 10000;
 
     this.openSocket(path);
 
