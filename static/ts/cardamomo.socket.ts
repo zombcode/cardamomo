@@ -76,7 +76,7 @@ export class CardamomoSocket {
     if( this.destroyed == false ) {
       this.send("CardamomoPing", "{}");
 
-      setTimeout(function () {
+      setTimeout(() => {
         this.ping();
       }, this.pingTime);
     }
