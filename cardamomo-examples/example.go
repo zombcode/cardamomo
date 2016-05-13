@@ -22,6 +22,7 @@ func main() {
 	// HTTP
 
   c := cardamomo.Instance("8000")
+  c.SetDevDebugMode(true)
 
   c.Get("/", func(req cardamomo.Request, res cardamomo.Response) {
 		res.Writer.Header().Set("Access-Control-Allow-Origin", "*")

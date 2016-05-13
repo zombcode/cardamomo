@@ -28,7 +28,7 @@ func Instance(port string) Cardamomo {
 	config["development"] = make(map[string]string)
 	config["development"]["debug"] = "false"
 	config["production"] = make(map[string]string)
-	config["production"]["debug"] = "true"
+	config["production"]["debug"] = "false"
 
   // Get server IP
   ip := GetHostIP()
@@ -151,6 +151,8 @@ func (c *Cardamomo) Run() {
 	for index, route := range c.compiledRoutes {
     index = 1
     _ = index
+
+    route.patternRegex = "\\A" + route.patternRegex
 
 		r, _ := regexp.Compile("/:([a-zA-Z0-9]+)")
 		if(r.MatchString(route.pattern)) {
