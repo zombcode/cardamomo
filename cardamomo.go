@@ -235,35 +235,60 @@ func (c *Cardamomo) OpenSocket() *Socket {
 }
 
 func (c *Cardamomo) GetSocket() *Socket {
-	return c.socket
+  return c.socket
 }
 
 // Utils
 var hostIP string = ""
 func GetHostIP() string {
   if hostIP == "" {
-    var ip net.IP
-    ifaces, err := net.Interfaces()
-    if err == nil {
-      for _, i := range ifaces {
-        addrs, err := i.Addrs()
-        if err == nil {
-          for _, addr := range addrs {
-            switch v := addr.(type) {
-            case *net.IPNet:
-              ip = v.IP
-            case *net.IPAddr:
-              ip = v.IP
-            }
+    tt, err := net.Interfaces()
+    if err != nil {
+      return ""
+    }
+    for _, t := range tt {
+      aa, err := t.Addrs()
+      if err != nil {
+        return ""
+      }
+      for _, a := range aa {
+        ipnet, ok := a.(*net.IPNet)
+        if !ok {
+          continue
+        }
+        v4 := ipnet.IP.To4()
+        if v4 == nil || v4[0] == 127 { // loopback address
+          continue
+        }
+        return v4.String()
+      }
+    }
+    return ""
+    } else {
+      return hostIP
+    }
+  }
+
+/*if hostIP == "" {
+  var ip net.IP
+  ifaces, err := net.Interfaces()
+  if err == nil {
+    for _, i := range ifaces {
+      addrs, err := i.Addrs()
+      if err == nil {
+        for _, addr := range addrs {
+          switch v := addr.(type) {
+          case *net.IPNet:
+            ip = v.IP
           }
         }
       }
     }
-
-    hostIP = ip.String()
-
-    return hostIP
-  } else {
-    return hostIP
   }
-}
+
+  hostIP = ip.String()
+
+  return hostIP
+} else {
+  return hostIP
+}*/
