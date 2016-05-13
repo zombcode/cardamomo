@@ -152,7 +152,7 @@ func (c *Cardamomo) Run() {
     index = 1
     _ = index
 
-    route.patternRegex = "\\A" + route.patternRegex
+    route.pattern = "\\A" + route.pattern
 
 		r, _ := regexp.Compile("/:([a-zA-Z0-9]+)")
 		if(r.MatchString(route.pattern)) {
