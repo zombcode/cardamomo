@@ -142,7 +142,6 @@ func (c *Cardamomo) Run() {
 		_ = index
 
 		fmt.Printf("     - Pattern: %s ✓\n", route.pattern)
-    route.pattern = "\\A" + route.pattern
 		c.compiledRoutes = append(c.compiledRoutes, route)
 	}
 	compileRoutes(c, c.router)
@@ -166,7 +165,7 @@ func (c *Cardamomo) Run() {
         route.patternRegex = strings.Replace(route.patternRegex, param, "/([a-zA-Z0-9!@#$&()\\-`.+,/\"]+)", -1)
 			}
 
-			fmt.Printf("\n   + Compiling route params for: %s ✓\n", strings.Replace(route.pattern, "\\A", "", -1))
+			fmt.Printf("\n   + Compiling route params for: %s ✓\n", route.pattern)
 		}
 	}
 
@@ -190,7 +189,7 @@ func (c *Cardamomo) Run() {
         route.patternRegex = strings.Replace(route.patternRegex, param, paramRegex, -1)
 			}
 
-			fmt.Printf("\n   + Compiling route regex for: %s ✓\n", strings.Replace(route.pattern, "\\A", "", -1))
+			fmt.Printf("\n   + Compiling route regex for: %s ✓\n", route.pattern)
 		}
 	}
 
@@ -210,7 +209,6 @@ func compileRoutes(c *Cardamomo, router *Router) {
 			_ = index
 
 			fmt.Printf("     - Pattern: %s ✓\n", route.pattern)
-      route.pattern = "\\A" + route.pattern
 			c.compiledRoutes = append(c.compiledRoutes, route)
 		}
 
