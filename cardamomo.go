@@ -142,6 +142,7 @@ func (c *Cardamomo) Run() {
 		_ = index
 
 		fmt.Printf("     - Pattern: %s ✓\n", route.pattern)
+    route.pattern = "\\A" + route.pattern
 		c.compiledRoutes = append(c.compiledRoutes, route)
 	}
 	compileRoutes(c, c.router)
@@ -151,8 +152,6 @@ func (c *Cardamomo) Run() {
 	for index, route := range c.compiledRoutes {
     index = 1
     _ = index
-
-    route.pattern = "\\A" + route.pattern
 
 		r, _ := regexp.Compile("/:([a-zA-Z0-9]+)")
 		if(r.MatchString(route.pattern)) {
