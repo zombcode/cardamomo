@@ -358,6 +358,18 @@ c.SetErrorHandler(func (code string, req cardamomo.Request, res cardamomo.Respon
 
 For example, you can use this to send 404 errors.
 
+#### Scripts layer
+
+The scripts layer is for timer tasks use. You can add timer tasks for executing at scheduled time with...
+
+```sh
+scripts := cardamomo.NewScripts() // You need this line in order to initialize scripts objects
+
+scripts.AddScript(func() {
+  fmt.Printf("\n10 seconds! \n");
+}, 10)
+```
+
 ##### In future
 
 At this moment the framework is very simple. In the future we want to implement:
