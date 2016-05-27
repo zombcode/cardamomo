@@ -38,7 +38,6 @@ func startNewTimer(s *Scripts, timerTime int) {
       select {
       case <- tricker.C:
         for _, currentTimerTime := range s.TimersTimes {
-          fmt.Printf("%s", currentTimerTime)
           for _, function := range s.Functions[currentTimerTime] {
     				function()
           }
