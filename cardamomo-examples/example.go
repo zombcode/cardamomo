@@ -1,9 +1,10 @@
 package main
 
 import (
+  "github.com/zombcode/cardamomo"
+  _"../../cardamomo"
 	"fmt"
 	"time"
-	"../../cardamomo"
 )
 
 type Box struct {
