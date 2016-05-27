@@ -1,5 +1,6 @@
 # cardamomo
 
+[![Build Status](https://travis-ci.org/zombcode/cardamomo.svg?branch=master)](https://travis-ci.org/zombcode/cardamomo)
 
 ### Installation
 
@@ -357,16 +358,16 @@ c.SetErrorHandler(func (code string, req cardamomo.Request, res cardamomo.Respon
 
 For example, you can use this to send 404 errors.
 
-### Examples
-
-You can see more examples on [cardamomo-examples](https://github.com/zombcode/cardamomo-examples)
-
 ##### In future
 
 At this moment the framework is very simple. In the future we want to implement:
 
 > - Layout manager
 > - File upload (single and multiple)
+
+### Examples
+
+You can see more examples on [cardamomo-examples](https://github.com/zombcode/cardamomo-examples)
 
 ### New documentation
 
