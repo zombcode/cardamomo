@@ -82,11 +82,8 @@ func (c *Cardamomo) Run() {
 					params := r.FindStringSubmatch(req.URL.Path)
 					index := 1
 					for key, param := range route.paramsOrder {
-						key = 1
-						_ = key
-
             if( c.Config["development"]["debug"] == "true" ) {
-              fmt.Printf("Add param: \"%s\":\"%s\"\n", key, params[index])
+              fmt.Printf("Add param: \"%s\":\"%s\" in order %s\n", param, params[index], key)
   					}
 
 						route.params[param] = params[index]
