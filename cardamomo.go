@@ -85,6 +85,10 @@ func (c *Cardamomo) Run() {
 						param = ""
 						_ = param
 
+            if( c.Config["development"]["debug"] == "true" ) {
+              fmt.Printf("Add param: \"%s\":\"%s\"\n", key, params[index])
+  					}
+
 						route.params[key] = params[index]
 						index += 1
 					}
