@@ -1,6 +1,6 @@
 # cardamomo
 
-[![Build Status](https://travis-ci.org/zombcode/cardamomo.svg?branch=master)](https://travis-ci.org/zombcode/cardamomo) [![Join the chat at https://gitter.im/zombcode/cardamomo](https://badges.gitter.im/zombcode/cardamomo.svg)](https://gitter.im/zombcode/cardamomo?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Build Status](https://travis-ci.org/zombcode/cardamomo.svg?branch=master)](https://travis-ci.org/zombcode/cardamomo) [![GoDoc](https://godoc.org/github.com/zombcode/cardamomo/minify?status.svg)](https://godoc.org/github.com/zombcode/cardamomo) [![Join the chat at https://gitter.im/zombcode/cardamomo](https://badges.gitter.im/zombcode/cardamomo.svg)](https://gitter.im/zombcode/cardamomo?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ### Installation
 
