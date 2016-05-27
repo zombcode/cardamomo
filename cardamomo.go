@@ -89,7 +89,8 @@ func (c *Cardamomo) Run() {
 						index += 1
 					}
 					if( c.Config["development"]["debug"] == "true" ) {
-						fmt.Printf("There are params: \"%s\"\n", route.params)
+            fmt.Printf("There are params: \"%s\"\n", params)
+						fmt.Printf("There are params with keys: \"%s\"\n", route.params)
 					}
 
 					currentRoute = route
