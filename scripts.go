@@ -71,12 +71,12 @@ func (s *Scripts) AddScriptAtTime(function ScriptFunc, datetime time.Time) {
   s.FunctionsDatetimes[datetimeUnix] = append(s.FunctionsDatetimes[datetimeUnix], function)
 
   if !SliceContains(s.TimersDatetimes, datetimeUnix) {
-    startNewDatetimeTimer(s, datetimeUnix)
+    startNewTimeTimer(s, datetimeUnix)
     s.TimersDatetimes = append(s.TimersDatetimes, datetimeUnix)
   }
 }
 
-func startNewDatetimeTimer(s *Scripts, datetime int) {
+func startNewTimeTimer(s *Scripts, datetime int) {
   tricker := time.NewTicker(time.Second)
   quit := make(chan struct{})
   go func() {
