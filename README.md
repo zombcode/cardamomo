@@ -370,12 +370,26 @@ scripts.AddScript(func() {
 }, 10)
 ```
 
+if you need to execute task at concrete time, you can use...
+
+```sh
+scriptDatetime, err := time.Parse("3 04 00 PM", "9 46 00 PM") // This execute task at 9:46 every days
+fmt.Printf("\n\nTime: %s\n\n", scriptDatetime);
+
+if err == nil {
+  scripts.AddScriptAtTime(func() {
+    fmt.Printf("\nConcrete time! \n");
+  }, scriptDatetime)
+}
+```
+
 ##### In future
 
 At this moment the framework is very simple. In the future we want to implement:
 
 > - Layout manager
 > - File upload (single and multiple)
+> - Script tasks with date precision
 
 ### Examples
 
