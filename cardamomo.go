@@ -72,7 +72,7 @@ func (c *Cardamomo) Run() {
 			index = 1
 			_ = index
 
-			if route.patternRegex != "" && route.method == req.Method {
+			if route.patternRegex != "" && strings.ToLower(route.method) == strings.ToLower(req.Method) {
 				if c.Config["development"]["debug"] == "true" {
 					fmt.Printf("Checking: \"%s\" for \"%s\"\n", route.patternRegex, req.URL.Path)
 				}
