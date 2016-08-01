@@ -62,7 +62,7 @@ func (c *Cardamomo) Run() {
 	http.Handle("/cardamomo/", http.StripPrefix("/cardamomo/", http.FileServer(http.Dir(path.Dir(filename) + "/static"))))
 
 	http.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
-		if( req.URL.Path == "/favicon.ico" ) {
+		if req.URL.Path == "/favicon.ico" {
 			return
 		}
 
@@ -72,24 +72,24 @@ func (c *Cardamomo) Run() {
 			index = 1
 			_ = index
 
-			if(route.patternRegex != "") {
-				if( c.Config["development"]["debug"] == "true" ) {
+			if route.patternRegex != "" && route.method == req.Method {
+				if c.Config["development"]["debug"] == "true" {
 					fmt.Printf("Checking: \"%s\" for \"%s\"\n", route.patternRegex, req.URL.Path)
 				}
 
 				r, _ := regexp.Compile(route.patternRegex)
-				if(r.MatchString(req.URL.Path)) {
+				if r.MatchString(req.URL.Path) {
 					params := r.FindStringSubmatch(req.URL.Path)
 					index := 1
 					for key, param := range route.paramsOrder {
-            if( c.Config["development"]["debug"] == "true" ) {
+            if c.Config["development"]["debug"] == "true" {
               fmt.Printf("Add param: \"%s\":\"%s\" in order %s\n", param, params[index], key)
   					}
 
 						route.params[param] = params[index]
 						index += 1
 					}
-					if( c.Config["development"]["debug"] == "true" ) {
+					if c.Config["development"]["debug"] == "true" {
             fmt.Printf("There are params: \"%s\"\n", params)
 						fmt.Printf("There are params with keys: \"%s\"\n", route.params)
 					}
@@ -97,37 +97,37 @@ func (c *Cardamomo) Run() {
 					currentRoute = route
 					break
 				}
-			} else if( req.URL.Path == route.pattern ) {
+			} else if req.URL.Path == route.pattern {
 				currentRoute = route
 				break
 			}
 		}
 
-		if(currentRoute != nil) {
-			if( strings.ToLower(req.Method) == strings.ToLower(currentRoute.method) ) {
-				if( c.Config["production"]["debug"] == "true" ) {
+		if currentRoute != nil {
+			if strings.ToLower(req.Method) == strings.ToLower(currentRoute.method) {
+				if c.Config["production"]["debug"] == "true" {
 	      	fmt.Printf("\n %s: %s => %s \n", req.Method, currentRoute.pattern, req.URL.Path)
 				}
 	      request := NewRequest(w, req, currentRoute)
 	      response := NewResponse(w, req)
 	      currentRoute.callback(request, response)
 	    } else {
-				if( c.Config["production"]["debug"] == "true" ) {
+				if c.Config["production"]["debug"] == "true" {
 					fmt.Printf("\n HTTP ERROR: 404 - 1")
 				}
 
-				if( c.errorHandler != nil ) {
+				if c.errorHandler != nil {
 					request := NewRequest(w, req, nil)
 		      response := NewResponse(w, req)
 					c.errorHandler("404", request, response)
 				}
 			}
 		} else {
-			if( c.Config["production"]["debug"] == "true" ) {
+			if c.Config["production"]["debug"] == "true" {
 				fmt.Printf("\n HTTP ERROR: 404 - 2")
 			}
 
-			if( c.errorHandler != nil ) {
+			if c.errorHandler != nil {
 				request := NewRequest(w, req, nil)
 	      response := NewResponse(w, req)
 				c.errorHandler("404", request, response)
@@ -155,7 +155,7 @@ func (c *Cardamomo) Run() {
     _ = index
 
 		r, _ := regexp.Compile("/:([a-zA-Z0-9]+)")
-		if(r.MatchString(route.pattern)) {
+		if r.MatchString(route.pattern) {
 			params := r.FindAllString(route.pattern, -1)
 
 			route.patternRegex = route.pattern
@@ -179,7 +179,7 @@ func (c *Cardamomo) Run() {
 		_ = index
 
 		r, _ := regexp.Compile("{{(.*)}}")
-		if(r.MatchString(route.pattern)) {
+		if r.MatchString(route.pattern) {
 			params := r.FindAllString(route.pattern, -1)
 
 			for index, param := range params {
