@@ -101,16 +101,16 @@ func (r *Request) DeleteCookie(key string, path string, domain string) {
   r.SetCookie(key, "", path, domain, expire, 0, false, false)
 }
 
-func (r *Request) MoveUploadedFile(fileKey string, destinationPath string) bool {
+func (r *Request) MoveUploadedFile(fileKey string, destinationPath string) err {
   f1, _, err := r.GetFile("foo")
   if err != nil {
-    return false
+    return err
   }
   defer f1.Close()
 
   f2, err := os.OpenFile(destinationPath, os.O_WRONLY|os.O_CREATE, 0666)
   if err != nil {
-    return false
+    return err
   }
   defer f2.Close()
 
@@ -118,8 +118,8 @@ func (r *Request) MoveUploadedFile(fileKey string, destinationPath string) bool 
   _ = n
 
   if err != nil {
-    return false
+    return err
   }
 
-  return true
+  return err
 }
