@@ -110,7 +110,7 @@ func (c *Cardamomo) Run() {
 				}
 	      request := NewRequest(w, req, currentRoute)
 	      response := NewResponse(w, req)
-	      currentRoute.callback(request, response)
+	      go currentRoute.callback(request, response)
 	    } else {
 				if c.Config["production"]["debug"] == "true" {
 					fmt.Printf("\n HTTP ERROR: 404 - 1")
