@@ -101,7 +101,7 @@ func (r *Request) DeleteCookie(key string, path string, domain string) {
   r.SetCookie(key, "", path, domain, expire, 0, false, false)
 }
 
-func (r *Request) MoveUploadedFile(fileKey string, destinationPath string) err {
+func (r *Request) MoveUploadedFile(fileKey string, destinationPath string) error {
   f1, _, err := r.GetFile("foo")
   if err != nil {
     return err
