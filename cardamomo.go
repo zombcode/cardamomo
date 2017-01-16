@@ -97,9 +97,15 @@ func (c *Cardamomo) Run() {
 					currentRoute = route
 					break
 				}
-			} else if req.URL.Path == route.pattern {
-				currentRoute = route
-				break
+			} else {
+				if c.Config["development"]["debug"] == "true" {
+					fmt.Printf("Checking: \"%s\" for \"%s\" \"%s:%s\"\n", route.pattern, req.URL.Path, strings.ToUpper(route.method),req.Method)
+				}
+
+				if strings.ToLower(route.method) == strings.ToLower(req.Method) && req.URL.Path == route.pattern {
+					currentRoute = route
+					break
+				}
 			}
 		}
 
@@ -143,7 +149,7 @@ func (c *Cardamomo) Run() {
 		index = 1
 		_ = index
 
-		fmt.Printf("     - Pattern: %s ✓\n", route.pattern)
+		fmt.Printf("     - Pattern: %s %s ✓\n", route.pattern, strings.ToUpper(route.method))
 		c.compiledRoutes = append(c.compiledRoutes, route)
 	}
 	compileRoutes(c, c.router)
@@ -211,7 +217,7 @@ func compileRoutes(c *Cardamomo, router *Router) {
 			index = 1
 			_ = index
 
-			fmt.Printf("     - Pattern: %s ✓\n", route.pattern)
+			fmt.Printf("     - Pattern: %s %s ✓\n", route.pattern, strings.ToUpper(route.method))
 			c.compiledRoutes = append(c.compiledRoutes, route)
 		}
 
