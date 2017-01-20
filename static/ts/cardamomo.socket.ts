@@ -9,6 +9,7 @@ export class CardamomoSocket {
 
   private _actions = {};
   private _onOpen = null;
+  private _onClose = null;
 
   constructor(path : string) {
     this.pingTime = 10000;
@@ -51,7 +52,9 @@ export class CardamomoSocket {
     }
 
     this.ws.onclose = () => {
-      console.log("Disconnect!");
+      if(this._onClose != null) {
+        this._onClose();
+      }
       //try to reconnect in 5 seconds
       if( this.destroyed == false ) {
         setTimeout(
@@ -93,5 +96,9 @@ export class CardamomoSocket {
 
   onOpen = (callback) => {
     this._onOpen = callback;
+  };
+  
+  onClose = (callback) => {
+    this._onClose = callback;
   };
 }

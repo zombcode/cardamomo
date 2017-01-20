@@ -8,6 +8,7 @@ var Cardamomo = function() {
     var _socket = null;
     var _actions = {};
     var _onOpen = null;
+    var _onClose = null;
     var self = this;
 
     self.openSocket = function (path) {
@@ -46,7 +47,9 @@ var Cardamomo = function() {
       }
 
       _socket.onclose = (function() {
-        console.log("Disconnect!");
+      	if(_onClose != null) {
+		  _onClose();
+		}
         //try to reconnect in 5 seconds
         if( self.destroyed == false ) {
           setTimeout((function () {
@@ -88,6 +91,9 @@ var Cardamomo = function() {
 
     this.onOpen = function(callback) {
       _onOpen = callback;
+    };
+    this.onClose = function(callback) {
+      _onClose = callback;
     };
     this.on = onMessage;
     this.send = send;
