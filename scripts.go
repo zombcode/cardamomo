@@ -32,6 +32,9 @@ func (s *Scripts) AddScript(function ScriptFunc, timerTime int) {
   s.Functions[timerTime] = append(s.Functions[timerTime], function)
 
   if !SliceContains(s.TimersTimes, timerTime) {
+    fmt.Printf("\n\n************************************************************")
+    fmt.Printf("\nTimer at: %v\n", timerTime)
+    fmt.Printf("************************************************************\n\n")
     startNewTimer(s, timerTime)
     s.TimersTimes = append(s.TimersTimes, timerTime)
   }
@@ -41,18 +44,14 @@ func startNewTimer(s *Scripts, timerTime int) {
   tricker := time.NewTicker(time.Duration(int32(timerTime)) * time.Second)
   quit := make(chan struct{})
   go func() {
-    for _, currentTimerTime := range s.TimersTimes {
-      for _, function := range s.Functions[currentTimerTime] {
-        function()
-      }
-    }
-
     for {
       select {
       case <- tricker.C:
         for _, currentTimerTime := range s.TimersTimes {
-          for _, function := range s.Functions[currentTimerTime] {
-    				function()
+          if currentTimerTime == timerTime {
+            for _, function := range s.Functions[currentTimerTime] {
+    				  function()
+            }
           }
         }
       case <- quit:
