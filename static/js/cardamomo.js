@@ -40,7 +40,9 @@ var Cardamomo = function() {
             // Pong
           } else {
             if( data.Action in _actions ) {
-              _actions[data.Action](data.Params);
+              for( var i in _actions[data.Action] ) {
+                _actions[data.Action][i](data.Params);
+              }
             }
           }
         } catch(e) {}
@@ -61,7 +63,11 @@ var Cardamomo = function() {
     }
 
     function onMessage(action, callback) {
-      _actions[action] = callback;
+      if( !(action in _actions) ) {
+        _actions[action] = [];
+      }
+
+      _actions[action].push(callback);
     }
 
     function send(action, params) {
