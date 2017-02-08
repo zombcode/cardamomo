@@ -4,6 +4,7 @@ var Cardamomo = function() {
 
     var id = "";
     var destroyed = false;
+    var opened = false;
 
     var _socket = null;
     var _actions = {};
@@ -32,8 +33,10 @@ var Cardamomo = function() {
             self.id = data.Params.id;
 
             if(_onOpen != null) {
-              _onOpen();
+              _onOpen(self.opened);
             }
+
+            self.opened = true;
 
             self.ping();
           } else if( data.Action == "CardamomoPong" ) {
@@ -49,9 +52,9 @@ var Cardamomo = function() {
       }
 
       _socket.onclose = (function() {
-      	if(_onClose != null) {
-		  _onClose();
-		}
+        if(_onClose != null) {
+          _onClose();
+        }
         //try to reconnect in 5 seconds
         if( self.destroyed == false ) {
           setTimeout((function () {
@@ -72,8 +75,8 @@ var Cardamomo = function() {
 
     function send(action, params) {
       var message = {
-          "action": action,
-          "params": JSON.stringify(params)
+        "action": action,
+        "params": JSON.stringify(params)
       };
 
       message = JSON.stringify(message);
