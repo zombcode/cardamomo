@@ -79,21 +79,6 @@ func (c *Cardamomo) Run() {
 
 				r, _ := regexp.Compile(route.patternRegex)
 				if r.MatchString(req.URL.Path) {
-					params := r.FindStringSubmatch(req.URL.Path)
-					index := 1
-					for key, param := range route.paramsOrder {
-            if c.Config["development"]["debug"] == "true" {
-              fmt.Printf("Add param: \"%s\":\"%s\" in order %s\n", param, params[index], key)
-  					}
-
-						route.params[param] = params[index]
-						index += 1
-					}
-					if c.Config["development"]["debug"] == "true" {
-            fmt.Printf("There are params: \"%s\"\n", params)
-						fmt.Printf("There are params with keys: \"%s\"\n", route.params)
-					}
-
 					currentRoute = route
 					break
 				}

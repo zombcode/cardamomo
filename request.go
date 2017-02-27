@@ -8,13 +8,14 @@ import (
   "io"
   "os"
   "encoding/json"
+	"regexp"
 )
 
 type Request struct {
   w http.ResponseWriter
   httprequest *http.Request
-  params map[string]string
   jsonparams JSONC
+  route *Route
 }
 
 func NewRequest(w http.ResponseWriter, req *http.Request, route *Route) Request {
@@ -37,13 +38,7 @@ func NewRequest(w http.ResponseWriter, req *http.Request, route *Route) Request 
     req.ParseMultipartForm(32 << 20)
   }
 
-  // Route params
-  params := make(map[string]string)
-  if( route != nil ) {
-    params = route.params
-  }
-
-  return Request{w: w, httprequest: req, params: params, jsonparams: jsonparams}
+  return Request{w: w, httprequest: req, jsonparams: jsonparams, route: route}
 }
 
 func (r *Request) OriginalRequest() *http.Request {
@@ -51,8 +46,21 @@ func (r *Request) OriginalRequest() *http.Request {
 }
 
 func (r *Request) GetParam(key string, defaultValue string) string {
-   if param, ok := r.params[key]; ok {
-     return param
+   reg, _ := regexp.Compile(r.route.patternRegex)
+   if reg.MatchString(r.httprequest.URL.Path) {
+     urlparams := reg.FindStringSubmatch(r.httprequest.URL.Path)
+
+     params := make(map[string]string)
+     index := 1
+     for _, param := range r.route.paramsOrder {
+       params[param] = urlparams[index]
+
+       if param == key {
+         return urlparams[index]
+       }
+
+       index += 1
+     }
    }
 
    param := r.httprequest.FormValue(key)
