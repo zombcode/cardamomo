@@ -61,70 +61,7 @@ func (c *Cardamomo) Run() {
   }
 	http.Handle("/cardamomo/", http.StripPrefix("/cardamomo/", http.FileServer(http.Dir(path.Dir(filename) + "/static"))))
 
-	http.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
-		if req.URL.Path == "/favicon.ico" {
-			return
-		}
-
-		var currentRoute *Route
-
-		for index, route := range c.compiledRoutes {
-			index = 1
-			_ = index
-
-			if route.patternRegex != "" && strings.ToLower(route.method) == strings.ToLower(req.Method) {
-				if c.Config["development"]["debug"] == "true" {
-					fmt.Printf("Checking: \"%s\" for \"%s\"\n", route.patternRegex, req.URL.Path)
-				}
-
-				r, _ := regexp.Compile(route.patternRegex)
-				if r.MatchString(req.URL.Path) {
-					currentRoute = route
-					break
-				}
-			} else {
-				if c.Config["development"]["debug"] == "true" {
-					fmt.Printf("Checking: \"%s\" for \"%s\" \"%s:%s\"\n", route.pattern, req.URL.Path, strings.ToUpper(route.method),req.Method)
-				}
-
-				if strings.ToLower(route.method) == strings.ToLower(req.Method) && req.URL.Path == route.pattern {
-					currentRoute = route
-					break
-				}
-			}
-		}
-
-		if currentRoute != nil {
-			if strings.ToLower(req.Method) == strings.ToLower(currentRoute.method) {
-				if c.Config["production"]["debug"] == "true" {
-	      	fmt.Printf("\n %s: %s => %s \n", req.Method, currentRoute.pattern, req.URL.Path)
-				}
-	      request := NewRequest(w, req, currentRoute)
-	      response := NewResponse(w, req)
-	      currentRoute.callback(request, response)
-	    } else {
-				if c.Config["production"]["debug"] == "true" {
-					fmt.Printf("\n HTTP ERROR: 404 - 1")
-				}
-
-				if c.errorHandler != nil {
-					request := NewRequest(w, req, nil)
-		      response := NewResponse(w, req)
-					c.errorHandler("404", request, response)
-				}
-			}
-		} else {
-			if c.Config["production"]["debug"] == "true" {
-				fmt.Printf("\n HTTP ERROR: 404 - 2")
-			}
-
-			if c.errorHandler != nil {
-				request := NewRequest(w, req, nil)
-	      response := NewResponse(w, req)
-				c.errorHandler("404", request, response)
-			}
-		}
-  })
+	http.HandleFunc("/", HandleFunc)
 
 	// Compile routes
 	fmt.Printf("\n * Compiling routes...\n")
@@ -190,6 +127,71 @@ func (c *Cardamomo) Run() {
 	// Start HTTP server
 	fmt.Printf("\n * Starting HTTP server at: http://%s:%s\n", c.Config["server"]["ip"], c.Config["server"]["port"])
   http.ListenAndServe(":" + c.Config["server"]["port"], nil)
+}
+
+func HandleFunc(w http.ResponseWriter, req *http.Request) {
+	if req.URL.Path == "/favicon.ico" {
+		return
+	}
+
+	var currentRoute *Route
+
+	for index, route := range c.compiledRoutes {
+		index = 1
+		_ = index
+
+		if route.patternRegex != "" && strings.ToLower(route.method) == strings.ToLower(req.Method) {
+			if c.Config["development"]["debug"] == "true" {
+				fmt.Printf("Checking: \"%s\" for \"%s\"\n", route.patternRegex, req.URL.Path)
+			}
+
+			r, _ := regexp.Compile(route.patternRegex)
+			if r.MatchString(req.URL.Path) {
+				currentRoute = route
+				break
+			}
+		} else {
+			if c.Config["development"]["debug"] == "true" {
+				fmt.Printf("Checking: \"%s\" for \"%s\" \"%s:%s\"\n", route.pattern, req.URL.Path, strings.ToUpper(route.method),req.Method)
+			}
+
+			if strings.ToLower(route.method) == strings.ToLower(req.Method) && req.URL.Path == route.pattern {
+				currentRoute = route
+				break
+			}
+		}
+	}
+
+	if currentRoute != nil {
+		if strings.ToLower(req.Method) == strings.ToLower(currentRoute.method) {
+			if c.Config["production"]["debug"] == "true" {
+				fmt.Printf("\n %s: %s => %s \n", req.Method, currentRoute.pattern, req.URL.Path)
+			}
+			request := NewRequest(w, req, currentRoute)
+			response := NewResponse(w, req)
+			currentRoute.callback(request, response)
+		} else {
+			if c.Config["production"]["debug"] == "true" {
+				fmt.Printf("\n HTTP ERROR: 404 - 1")
+			}
+
+			if c.errorHandler != nil {
+				request := NewRequest(w, req, nil)
+				response := NewResponse(w, req)
+				c.errorHandler("404", request, response)
+			}
+		}
+	} else {
+		if c.Config["production"]["debug"] == "true" {
+			fmt.Printf("\n HTTP ERROR: 404 - 2")
+		}
+
+		if c.errorHandler != nil {
+			request := NewRequest(w, req, nil)
+			response := NewResponse(w, req)
+			c.errorHandler("404", request, response)
+		}
+	}
 }
 
 func compileRoutes(c *Cardamomo, router *Router) {
