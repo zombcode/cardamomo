@@ -61,7 +61,7 @@ func (c *Cardamomo) Run() {
   }
 	http.Handle("/cardamomo/", http.StripPrefix("/cardamomo/", http.FileServer(http.Dir(path.Dir(filename) + "/static"))))
 
-	http.HandleFunc("/", HandleFunc)
+	http.HandleFunc("/", c.HandleFunc)
 
 	// Compile routes
 	fmt.Printf("\n * Compiling routes...\n")
@@ -129,7 +129,7 @@ func (c *Cardamomo) Run() {
   http.ListenAndServe(":" + c.Config["server"]["port"], nil)
 }
 
-func HandleFunc(w http.ResponseWriter, req *http.Request) {
+func (c *Cardamomo) HandleFunc(w http.ResponseWriter, req *http.Request) {
 	if req.URL.Path == "/favicon.ico" {
 		return
 	}
