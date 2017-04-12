@@ -53,7 +53,11 @@ func (c *Cardamomo) SetErrorHandler(callback ErrorFunc) {
 
 // HTTP Server
 
-func (c *Cardamomo) Run() {
+func (c *Cardamomo) Run() error {
+	return c.RunAndCallback(nil)
+}
+
+func (c *Cardamomo) RunAndCallback(handler Handler) error {
   // Run server
 	_, filename, _, ok := runtime.Caller(0)
   if !ok {
@@ -126,7 +130,7 @@ func (c *Cardamomo) Run() {
 
 	// Start HTTP server
 	fmt.Printf("\n * Starting HTTP server at: http://%s:%s\n", c.Config["server"]["ip"], c.Config["server"]["port"])
-  http.ListenAndServe(":" + c.Config["server"]["port"], nil)
+  return http.ListenAndServe(":" + c.Config["server"]["port"], handler)
 }
 
 func (c *Cardamomo) HandleFunc(w http.ResponseWriter, req *http.Request) {
