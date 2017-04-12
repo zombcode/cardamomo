@@ -57,7 +57,7 @@ func (c *Cardamomo) Run() error {
 	return c.RunAndCallback(nil)
 }
 
-func (c *Cardamomo) RunAndCallback(handler Handler) error {
+func (c *Cardamomo) RunAndCallback(handler http.Handler) error {
   // Run server
 	_, filename, _, ok := runtime.Caller(0)
   if !ok {
