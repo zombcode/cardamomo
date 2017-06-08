@@ -17,6 +17,13 @@ type Cardamomo struct {
 	compiledRoutes []*Route
   Config map[string]map[string]string
 	errorHandler ErrorFunc
+	tls CardamomoTLS
+}
+
+type CardamomoTLS struct {
+	enabled bool
+	cert string
+	key string
 }
 
 type ErrorFunc func (code string, req Request, res Response) ()
@@ -49,6 +56,12 @@ func (c *Cardamomo) SetProdDebugMode(debug bool) {
 
 func (c *Cardamomo) SetErrorHandler(callback ErrorFunc) {
 	c.errorHandler = callback
+}
+
+func (c *Cardamomo) SetTLS(cert, key string) {
+	c.tls.enabled = true
+	c.tls.cert = cert
+	c.tls.key = key
 }
 
 // HTTP Server
@@ -126,6 +139,12 @@ func (c *Cardamomo) RunAndCallback(handler http.Handler) error {
 
 			fmt.Printf("\n   + Compiling route regex for: %s ✓\n", route.pattern)
 		}
+	}
+
+	if c.tls.enabled == true {
+		// Start HTTPS server
+		fmt.Printf("\n * Starting HTTPS server at: https://%s:%s\n", c.Config["server"]["ip"], c.Config["server"]["port"])
+	  return http.ListenAndServeTLS(":" + c.Config["server"]["port"], c.tls.cert, c.tls.key, handler)
 	}
 
 	// Start HTTP server
