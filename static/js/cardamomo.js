@@ -13,11 +13,12 @@ var Cardamomo = function() {
     var self = this;
 
     self.openSocket = function (path) {
-      path = path.replace('http://', '');
-      path = path.replace('https://', '');
-      path = path.replace('ws://', '');
-      path = path.replace('wss://', '');
-      path = "ws://" + path;
+      path = path.replace('http://', 'ws://');
+      path = path.replace('https://', 'wss://');
+
+      if( path.indexOf('ws://') !== -1 && path.indexOf('wss://') !== -1 ) {
+        path = 'ws://' + path;
+      }
 
       self.destroyed = false;
       _socket = new WebSocket(path);

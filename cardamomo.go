@@ -253,6 +253,10 @@ func (c *Cardamomo) OpenSocket() *Socket {
   return NewSocket(c)
 }
 
+func (c *Cardamomo) OpenSecureSocket(cert, key string) *Socket {
+  return NewSecureSocket(c, cert, key)
+}
+
 func (c *Cardamomo) GetSocket() *Socket {
   return c.socket
 }

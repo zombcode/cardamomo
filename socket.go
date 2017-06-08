@@ -12,11 +12,18 @@ import (
 
 type Socket struct {
   server *Cardamomo
+  tls SocketTLS
   routes []*SocketRoute
   clustered bool
   clusterParams *SocketClusterParams
   clusterMaster bool
   clusterConnections []*SocketClusterConnection
+}
+
+type SocketTLS struct {
+	enabled bool
+	cert string
+	key string
 }
 
 type SockFunc func (route *SocketClient) ()
@@ -26,6 +33,18 @@ func NewSocket(c *Cardamomo) *Socket {
   fmt.Printf("\n * Starting WebSocket server...\n")
 
   return &Socket{server:c, clustered:false}
+}
+
+func NewSecureSocket(c *Cardamomo, cert, key string) *Socket {
+  fmt.Printf("\n * Starting secure WebSocket server...\n")
+
+  tls := SocketTLS{
+    enabled: true,
+    cert: cert,
+    key: key,
+  }
+
+  return &Socket{server:c, clustered:false, tls: tls}
 }
 
 func (s *Socket) OnSocketBase(pattern string, callback SockFunc) {

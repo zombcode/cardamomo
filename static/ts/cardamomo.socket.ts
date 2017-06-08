@@ -17,11 +17,13 @@ export class CardamomoSocket {
   }
 
   private openSocket(path) {
-    path = path.replace('http://', '');
-    path = path.replace('https://', '');
-    path = path.replace('ws://', '');
-    path = path.replace('wss://', '');
-    path = "ws://" + path;
+    path = path.replace('http://', 'ws://');
+    path = path.replace('https://', 'wss://');
+
+    if( path.indexOf('ws://') !== -1 && path.indexOf('wss://') !== -1 ) {
+      path = 'ws://' + path;
+    }
+
     this.path = path;
     this.destroyed = false;
 
@@ -97,7 +99,7 @@ export class CardamomoSocket {
   onOpen = (callback) => {
     this._onOpen = callback;
   };
-  
+
   onClose = (callback) => {
     this._onClose = callback;
   };
