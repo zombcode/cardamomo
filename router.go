@@ -36,8 +36,28 @@ func (r *Router) Get(pattern string, callback ReqFunc) {
   r.addRoute("get", pattern, callback)
 }
 
+func (r *Router) Head(pattern string, callback ReqFunc) {
+  r.addRoute("head", pattern, callback)
+}
+
 func (r *Router) Post(pattern string, callback ReqFunc) {
   r.addRoute("post", pattern, callback)
+}
+
+func (r *Router) Put(pattern string, callback ReqFunc) {
+  r.addRoute("put", pattern, callback)
+}
+
+func (r *Router) Delete(pattern string, callback ReqFunc) {
+  r.addRoute("delete", pattern, callback)
+}
+
+func (r *Router) Connect(pattern string, callback ReqFunc) {
+  r.addRoute("connect", pattern, callback)
+}
+
+func (r *Router) Options(pattern string, callback ReqFunc) {
+  r.addRoute("options", pattern, callback)
 }
 
 func (r *Router) addRoute(method string, pattern string, callback ReqFunc) {

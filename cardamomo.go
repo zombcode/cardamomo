@@ -243,8 +243,28 @@ func (c *Cardamomo) Get(pattern string, callback ReqFunc) {
   c.router.Get(pattern, callback)
 }
 
+func (c *Cardamomo) Head(pattern string, callback ReqFunc) {
+  c.router.Head(pattern, callback)
+}
+
 func (c *Cardamomo) Post(pattern string, callback ReqFunc) {
   c.router.Post(pattern, callback)
+}
+
+func (c *Cardamomo) Put(pattern string, callback ReqFunc) {
+  c.router.Put(pattern, callback)
+}
+
+func (c *Cardamomo) Delete(pattern string, callback ReqFunc) {
+  c.router.Delete(pattern, callback)
+}
+
+func (c *Cardamomo) Connect(pattern string, callback ReqFunc) {
+  c.router.Connect(pattern, callback)
+}
+
+func (c *Cardamomo) Options(pattern string, callback ReqFunc) {
+  c.router.Options(pattern, callback)
 }
 
 // Socket
