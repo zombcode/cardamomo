@@ -106,7 +106,7 @@ func (r *Request) GetCookie(key string, defaultValue string) string {
 
 func (r *Request) DeleteCookie(key string, path string, domain string) {
   expire := time.Now().AddDate(0, 0, -1) // Expires yesterday!
-  r.SetCookie(key, "", path, domain, expire, 0, false, false)
+  r.SetCookie(key, "", path, domain, expire, 0, false, false, http.SameSiteStrict)
 }
 
 func (r *Request) MoveUploadedFile(fileKey string, destinationPath string) error {
