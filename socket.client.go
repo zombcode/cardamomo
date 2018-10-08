@@ -10,7 +10,7 @@ import (
 )
 
 type SocketClient struct {
-  ws *websocket.Conn
+  WebSocket *websocket.Conn
   route *SocketRoute
   actions []*SocketAction
   id string
@@ -35,7 +35,7 @@ func NewSocketClient(ws *websocket.Conn, route *SocketRoute) SocketClient {
   rand.Seed(time.Now().UnixNano())
   id := RandStringRunes(32)
 
-  return SocketClient{ws: ws, route: route, id: id}
+  return SocketClient{WebSocket: ws, route: route, id: id}
 }
 
 func (sc *SocketClient) GetID() string {
@@ -45,7 +45,7 @@ func (sc *SocketClient) GetID() string {
 func (sc *SocketClient) Listen() {
   for {
     var msg SocketClientMessage
-    err := websocket.JSON.Receive(sc.ws, &msg)
+    err := websocket.JSON.Receive(sc.WebSocket, &msg)
     if err == io.EOF {
       // Error
       // Disconnect and remove from client
@@ -103,7 +103,7 @@ func (sc *SocketClient) OnSocketAction(action string, callback SockActionFunc) {
 
 func (sc *SocketClient) Send(action string, params interface{}) {
   msg := SocketMessage{Action:action, Params: params}
-  websocket.JSON.Send(sc.ws, msg)
+  websocket.JSON.Send(sc.WebSocket, msg)
 }
 
 var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
