@@ -110,7 +110,7 @@ func (c *Cardamomo) RunAndCallback(handler http.Handler) error {
 
 				route.params[strings.Replace(param, "/:", "", -1)] = ""
         route.paramsOrder = append(route.paramsOrder, strings.Replace(param, "/:", "", -1))
-        route.patternRegex = strings.Replace(route.patternRegex, param, "/([a-zA-Z0-9!@#$&()\\-`.+,/\"]+)", -1)
+        route.patternRegex = strings.Replace(route.patternRegex, param, "/([a-zA-Z0-9!@#$&()_\\-`.+,/\"]+)", -1)
 			}
 
 			fmt.Printf("\n   + Compiling route params for: %s ✓\n", route.pattern)
