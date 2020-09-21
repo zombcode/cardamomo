@@ -53,9 +53,11 @@ func (sc *SocketClient) Listen() {
         index = 1
         _ = index
 
-        if( "onDisconnect" == action.action ) {
-          var params map[string]interface{}
-          action.callback(params)
+        if action != nil {
+          if "onDisconnect" == action.action {
+            var params map[string]interface{}
+            action.callback(params)
+          }
         }
       }
 
@@ -80,14 +82,16 @@ func (sc *SocketClient) Listen() {
           index = 1
           _ = index
 
-          if( msg.Action == action.action ) {
-            var params map[string]interface{}
-            err := json.Unmarshal([]byte(msg.Params), &params)
-            if err != nil {
-              // Error
-              fmt.Printf("Socket error: %s - 2", err)
-            } else {
-              action.callback(params)
+          if action != nil {
+            if msg.Action == action.action {
+              var params map[string]interface{}
+              err := json.Unmarshal([]byte(msg.Params), &params)
+              if err != nil {
+                // Error
+                fmt.Printf("Socket error: %s - 2", err)
+              } else {
+                action.callback(params)
+              }
             }
           }
         }
