@@ -60,15 +60,11 @@ func (s *Socket) addBase(pattern string, callback SockFunc) SocketRoute {
 }
 
 func (s *Socket) Send(action string, params interface{}) {
-  for index, route := range s.routes {
-    index = 1
-    _ = index
-
-    for index, client := range route.clients {
-      index = ""
-      _ = index
-
-      client.Send(action, params)
+  for _, route := range s.routes {
+    if route.clients != nil {
+      for _, client := range route.clients {
+        client.Send(action, params)
+      }
     }
   }
 
@@ -99,16 +95,12 @@ func (s *Socket) Send(action string, params interface{}) {
 }
 
 func (s *Socket) SendBase(base string, action string, params interface{}) {
-  for index, route := range s.routes {
-    index = 1
-    _ = index
-
-    if( route.pattern == base ) {
-      for index, client := range route.clients {
-        index = ""
-        _ = index
-
-        client.Send(action, params)
+  for _, route := range s.routes {
+    if route.pattern == base {
+      if route.clients != nil {
+        for _, client := range route.clients {
+          client.Send(action, params)
+        }
       }
 
       break
@@ -144,19 +136,15 @@ func (s *Socket) SendBase(base string, action string, params interface{}) {
 
 func (s *Socket) SendClient(clientID string, action string, params interface{}) {
   RoutesLoop:
-    for index, route := range s.routes {
-      index = 1
-      _ = index
+    for _, route := range s.routes {
+      if route.clients != nil {
+        for _, client := range route.clients {
+          if client.id == clientID {
+            client.Send(action, params)
 
-      for index, client := range route.clients {
-        index = ""
-        _ = index
-
-        if( client.id == clientID ) {
-          client.Send(action, params)
-
-          break RoutesLoop
-          break
+            break RoutesLoop
+            break
+          }
         }
       }
     }
@@ -194,18 +182,14 @@ func (s *Socket) ClientExists(clientID string) bool {
   exists := false
 
   RoutesLoop:
-    for index, route := range s.routes {
-      index = 1
-      _ = index
-
-      for index, client := range route.clients {
-        index = ""
-        _ = index
-
-        if( client.id == clientID ) {
-          exists = true
-          break RoutesLoop
-          break
+    for _, route := range s.routes {
+      if route.clients != nil {
+        for _, client := range route.clients {
+          if client.id == clientID {
+            exists = true
+            break RoutesLoop
+            break
+          }
         }
       }
     }
@@ -216,30 +200,22 @@ func (s *Socket) ClientExists(clientID string) bool {
 // Cluster
 
 func (s *Socket) sendCluster(action string, params interface{}) {
-  for index, route := range s.routes {
-    index = 1
-    _ = index
-
-    for index, client := range route.clients {
-      index = ""
-      _ = index
-
-      client.Send(action, params)
+  for _, route := range s.routes {
+    if route.clients != nil {
+      for _, client := range route.clients {
+        client.Send(action, params)
+      }
     }
   }
 }
 
 func (s *Socket) sendBaseCluster(base string, action string, params interface{}) {
-  for index, route := range s.routes {
-    index = 1
-    _ = index
-
-    if( route.pattern == base ) {
-      for index, client := range route.clients {
-        index = ""
-        _ = index
-
-        client.Send(action, params)
+  for _, route := range s.routes {
+    if route.pattern == base {
+      if route.clients != nil {
+        for _, client := range route.clients {
+          client.Send(action, params)
+        }
       }
 
       break
@@ -249,18 +225,14 @@ func (s *Socket) sendBaseCluster(base string, action string, params interface{})
 
 func (s *Socket) sendClientCluster(clientID string, action string, params interface{}) {
   RoutesLoop:
-    for index, route := range s.routes {
-      index = 1
-      _ = index
+    for _, route := range s.routes {
+      if route.clients != nil {
+        for _, client := range route.clients {
+          if client.id == clientID {
+            client.Send(action, params)
 
-      for index, client := range route.clients {
-        index = ""
-        _ = index
-
-        if( client.id == clientID ) {
-          client.Send(action, params)
-
-          break RoutesLoop
+            break RoutesLoop
+          }
         }
       }
     }
