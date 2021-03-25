@@ -66,10 +66,10 @@ func (s *Socket) Send(action string, params interface{}) {
   for _, route := range s.routes {
     if route.clients != nil {
       lock.RLock()
-      defer lock.RUnlock()
       for _, client := range route.clients {
         client.Send(action, params)
       }
+      lock.RUnlock()
     }
   }
 
@@ -104,10 +104,10 @@ func (s *Socket) SendBase(base string, action string, params interface{}) {
     if route.pattern == base {
       if route.clients != nil {
         lock.RLock()
-        defer lock.RUnlock()
         for _, client := range route.clients {
           client.Send(action, params)
         }
+        lock.RUnlock()
       }
 
       break
@@ -146,7 +146,6 @@ func (s *Socket) SendClient(clientID string, action string, params interface{}) 
     for _, route := range s.routes {
       if route.clients != nil {
         lock.RLock()
-        defer lock.RUnlock()
         for _, client := range route.clients {
           if client.id == clientID {
             client.Send(action, params)
@@ -155,6 +154,7 @@ func (s *Socket) SendClient(clientID string, action string, params interface{}) 
             break
           }
         }
+        lock.RUnlock()
       }
     }
 
@@ -188,13 +188,18 @@ func (s *Socket) SendClient(clientID string, action string, params interface{}) 
 // Utils
 
 func (s *Socket) ClientExists(clientID string) bool {
+  defer func() {
+    if err := recover(); err != nil {
+      fmt.Println("panic occurred:", err)
+    }
+  }()
+  
   exists := false
 
   RoutesLoop:
     for _, route := range s.routes {
       if route.clients != nil {
         lock.RLock()
-        defer lock.RUnlock()
         for _, client := range route.clients {
           if client.id == clientID {
             exists = true
@@ -202,6 +207,7 @@ func (s *Socket) ClientExists(clientID string) bool {
             break
           }
         }
+        lock.RUnlock()
       }
     }
 
@@ -214,10 +220,10 @@ func (s *Socket) sendCluster(action string, params interface{}) {
   for _, route := range s.routes {
     if route.clients != nil {
       lock.RLock()
-      defer lock.RUnlock()
       for _, client := range route.clients {
         client.Send(action, params)
       }
+      lock.RUnlock()
     }
   }
 }
@@ -227,10 +233,10 @@ func (s *Socket) sendBaseCluster(base string, action string, params interface{})
     if route.pattern == base {
       if route.clients != nil {
         lock.RLock()
-        defer lock.RUnlock()
         for _, client := range route.clients {
           client.Send(action, params)
         }
+        lock.RUnlock()
       }
 
       break
@@ -243,7 +249,6 @@ func (s *Socket) sendClientCluster(clientID string, action string, params interf
     for _, route := range s.routes {
       if route.clients != nil {
         lock.RLock()
-        defer lock.RUnlock()
         for _, client := range route.clients {
           if client.id == clientID {
             client.Send(action, params)
@@ -251,6 +256,7 @@ func (s *Socket) sendClientCluster(clientID string, action string, params interf
             break RoutesLoop
           }
         }
+        lock.RUnlock()
       }
     }
 }

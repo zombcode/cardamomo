@@ -35,10 +35,11 @@ func (sr *SocketRoute) Listen() {
     client := NewSocketClient(ws, sr)
 
     lock.RLock()
-    defer lock.RUnlock()
     //sr.clients = append(sr.clients, &client)
     sr.clients[client.id] = &client
     sr.callback(&client)
+    lock.RUnlock()
+    
     client.Listen()
   }
   http.Handle(sr.pattern, websocket.Handler(onConnected))

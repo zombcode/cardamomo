@@ -43,7 +43,14 @@ func (sc *SocketClient) GetID() string {
 }
 
 func (sc *SocketClient) Listen() {
+  defer func() {
+    if err := recover(); err != nil {
+      fmt.Println("panic occurred:", err)
+    }
+  }()
+  
   for {
+    lock.RLock()
     var msg SocketClientMessage
     err := websocket.JSON.Receive(sc.WebSocket, &msg)
     if err == io.EOF {
@@ -97,6 +104,7 @@ func (sc *SocketClient) Listen() {
         }
       }
     }
+    lock.RUnlock()
   }
 }
 
