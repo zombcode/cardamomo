@@ -48,9 +48,9 @@ func (sc *SocketClient) Listen() {
       fmt.Println("panic occurred:", err)
     }
   }()
-  
+
   for {
-    lock.RLock()
+    sc.route.mutex.RLock()
     var msg SocketClientMessage
     err := websocket.JSON.Receive(sc.WebSocket, &msg)
     if err == io.EOF {
@@ -104,7 +104,7 @@ func (sc *SocketClient) Listen() {
         }
       }
     }
-    lock.RUnlock()
+    sc.route.mutex.RUnlock()
   }
 }
 

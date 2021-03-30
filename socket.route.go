@@ -5,6 +5,7 @@ import (
 	"net/http"
   b64 "encoding/base64"
   "golang.org/x/net/websocket"
+  "sync"
 )
 
 type SocketRoute struct {
@@ -12,6 +13,7 @@ type SocketRoute struct {
   pattern string
   callback SockFunc
   clients map[string]*SocketClient
+  mutex sync.RWMutex
 }
 
 func NewSocketRoute(s *Socket, pattern string, callback SockFunc) SocketRoute {
@@ -34,12 +36,12 @@ func (sr *SocketRoute) Listen() {
 
     client := NewSocketClient(ws, sr)
 
-    lock.RLock()
+    sr.mutex.RLock()
     //sr.clients = append(sr.clients, &client)
     sr.clients[client.id] = &client
     sr.callback(&client)
-    lock.RUnlock()
-    
+    sr.mutex.RUnlock()
+
     client.Listen()
   }
   http.Handle(sr.pattern, websocket.Handler(onConnected))

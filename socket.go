@@ -8,7 +8,6 @@ import (
   "time"
   "io"
   "os"
-  "sync"
 )
 
 type Socket struct {
@@ -29,8 +28,6 @@ type SocketTLS struct {
 
 type SockFunc func (route *SocketClient) ()
 type SockActionFunc func (params map[string]interface{}) ()
-
-var lock = sync.RWMutex{}
 
 func NewSocket(c *Cardamomo) *Socket {
   fmt.Printf("\n * Starting WebSocket server...\n")
@@ -65,11 +62,11 @@ func (s *Socket) addBase(pattern string, callback SockFunc) SocketRoute {
 func (s *Socket) Send(action string, params interface{}) {
   for _, route := range s.routes {
     if route.clients != nil {
-      lock.RLock()
+      route.mutex.RLock()
       for _, client := range route.clients {
         client.Send(action, params)
       }
-      lock.RUnlock()
+      route.mutex.RUnlock()
     }
   }
 
@@ -103,11 +100,11 @@ func (s *Socket) SendBase(base string, action string, params interface{}) {
   for _, route := range s.routes {
     if route.pattern == base {
       if route.clients != nil {
-        lock.RLock()
+        route.mutex.RLock()
         for _, client := range route.clients {
           client.Send(action, params)
         }
-        lock.RUnlock()
+        route.mutex.RUnlock()
       }
 
       break
@@ -145,7 +142,7 @@ func (s *Socket) SendClient(clientID string, action string, params interface{}) 
   RoutesLoop:
     for _, route := range s.routes {
       if route.clients != nil {
-        lock.RLock()
+        route.mutex.RLock()
         for _, client := range route.clients {
           if client.id == clientID {
             client.Send(action, params)
@@ -154,7 +151,7 @@ func (s *Socket) SendClient(clientID string, action string, params interface{}) 
             break
           }
         }
-        lock.RUnlock()
+        route.mutex.RUnlock()
       }
     }
 
@@ -193,13 +190,13 @@ func (s *Socket) ClientExists(clientID string) bool {
       fmt.Println("panic occurred:", err)
     }
   }()
-  
+
   exists := false
 
   RoutesLoop:
     for _, route := range s.routes {
       if route.clients != nil {
-        lock.RLock()
+        route.mutex.RLock()
         for _, client := range route.clients {
           if client.id == clientID {
             exists = true
@@ -207,7 +204,7 @@ func (s *Socket) ClientExists(clientID string) bool {
             break
           }
         }
-        lock.RUnlock()
+        route.mutex.RUnlock()
       }
     }
 
@@ -219,11 +216,11 @@ func (s *Socket) ClientExists(clientID string) bool {
 func (s *Socket) sendCluster(action string, params interface{}) {
   for _, route := range s.routes {
     if route.clients != nil {
-      lock.RLock()
+      route.mutex.RLock()
       for _, client := range route.clients {
         client.Send(action, params)
       }
-      lock.RUnlock()
+      route.mutex.RUnlock()
     }
   }
 }
@@ -232,11 +229,11 @@ func (s *Socket) sendBaseCluster(base string, action string, params interface{})
   for _, route := range s.routes {
     if route.pattern == base {
       if route.clients != nil {
-        lock.RLock()
+        route.mutex.RLock()
         for _, client := range route.clients {
           client.Send(action, params)
         }
-        lock.RUnlock()
+        route.mutex.RUnlock()
       }
 
       break
@@ -248,7 +245,7 @@ func (s *Socket) sendClientCluster(clientID string, action string, params interf
   RoutesLoop:
     for _, route := range s.routes {
       if route.clients != nil {
-        lock.RLock()
+        route.mutex.RLock()
         for _, client := range route.clients {
           if client.id == clientID {
             client.Send(action, params)
@@ -256,7 +253,7 @@ func (s *Socket) sendClientCluster(clientID string, action string, params interf
             break RoutesLoop
           }
         }
-        lock.RUnlock()
+        route.mutex.RUnlock()
       }
     }
 }
