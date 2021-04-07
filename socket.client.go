@@ -50,7 +50,6 @@ func (sc *SocketClient) Listen() {
   }()
 
   for {
-    sc.route.mutex.RLock()
     var msg SocketClientMessage
     err := websocket.JSON.Receive(sc.WebSocket, &msg)
     if err == io.EOF {
@@ -68,7 +67,7 @@ func (sc *SocketClient) Listen() {
         }
       }
 
-      delete(sc.route.clients, sc.id)
+      sc.route.clients.Delete(sc.id)
 
       return
     } else if err != nil {
@@ -104,7 +103,6 @@ func (sc *SocketClient) Listen() {
         }
       }
     }
-    sc.route.mutex.RUnlock()
   }
 }
 

@@ -12,14 +12,11 @@ type SocketRoute struct {
   socket *Socket
   pattern string
   callback SockFunc
-  clients map[string]*SocketClient
-  mutex sync.RWMutex
+  clients *sync.Map
 }
 
 func NewSocketRoute(s *Socket, pattern string, callback SockFunc) SocketRoute {
-  clients := make(map[string]*SocketClient)
-
-  return SocketRoute{socket: s, pattern: pattern, callback: callback, clients: clients}
+  return SocketRoute{socket: s, pattern: pattern, callback: callback, clients: &sync.Map{}}
 }
 
 func (sr *SocketRoute) Listen() {
@@ -36,11 +33,8 @@ func (sr *SocketRoute) Listen() {
 
     client := NewSocketClient(ws, sr)
 
-    sr.mutex.RLock()
-    //sr.clients = append(sr.clients, &client)
-    sr.clients[client.id] = &client
+    sr.clients.Store(client.id, &client)
     sr.callback(&client)
-    sr.mutex.RUnlock()
 
     client.Listen()
   }

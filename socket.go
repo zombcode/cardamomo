@@ -61,13 +61,10 @@ func (s *Socket) addBase(pattern string, callback SockFunc) SocketRoute {
 
 func (s *Socket) Send(action string, params interface{}) {
   for _, route := range s.routes {
-    if route.clients != nil {
-      route.mutex.RLock()
-      for _, client := range route.clients {
-        client.Send(action, params)
-      }
-      route.mutex.RUnlock()
-    }
+    route.clients.Range(func (id, client interface{}) bool {
+      client.(*SocketClient).Send(action, params)
+      return true
+    })
   }
 
   if s.clustered == true {
@@ -99,13 +96,10 @@ func (s *Socket) Send(action string, params interface{}) {
 func (s *Socket) SendBase(base string, action string, params interface{}) {
   for _, route := range s.routes {
     if route.pattern == base {
-      if route.clients != nil {
-        route.mutex.RLock()
-        for _, client := range route.clients {
-          client.Send(action, params)
-        }
-        route.mutex.RUnlock()
-      }
+      route.clients.Range(func (id, client interface{}) bool {
+        client.(*SocketClient).Send(action, params)
+        return true
+      })
 
       break
     }
@@ -141,17 +135,18 @@ func (s *Socket) SendBase(base string, action string, params interface{}) {
 func (s *Socket) SendClient(clientID string, action string, params interface{}) {
   RoutesLoop:
     for _, route := range s.routes {
-      if route.clients != nil {
-        route.mutex.RLock()
-        for _, client := range route.clients {
-          if client.id == clientID {
-            client.Send(action, params)
+      bk := false
+      route.clients.Range(func (id, client interface{}) bool {
+        if client.(*SocketClient).id == clientID {
+          client.(*SocketClient).Send(action, params)
 
-            break RoutesLoop
-            break
-          }
+          bk = true
+          return false
         }
-        route.mutex.RUnlock()
+        return true
+      })
+      if bk {
+        break RoutesLoop
       }
     }
 
@@ -195,16 +190,17 @@ func (s *Socket) ClientExists(clientID string) bool {
 
   RoutesLoop:
     for _, route := range s.routes {
-      if route.clients != nil {
-        route.mutex.RLock()
-        for _, client := range route.clients {
-          if client.id == clientID {
-            exists = true
-            break RoutesLoop
-            break
-          }
+      bk := false
+      route.clients.Range(func (id, client interface{}) bool {
+        if client.(*SocketClient).id == clientID {
+          exists = true
+          bk = true
+          return false
         }
-        route.mutex.RUnlock()
+        return true
+      })
+      if bk {
+        break RoutesLoop
       }
     }
 
@@ -215,26 +211,20 @@ func (s *Socket) ClientExists(clientID string) bool {
 
 func (s *Socket) sendCluster(action string, params interface{}) {
   for _, route := range s.routes {
-    if route.clients != nil {
-      route.mutex.RLock()
-      for _, client := range route.clients {
-        client.Send(action, params)
-      }
-      route.mutex.RUnlock()
-    }
+    route.clients.Range(func (id, client interface{}) bool {
+      client.(*SocketClient).Send(action, params)
+      return true
+    })
   }
 }
 
 func (s *Socket) sendBaseCluster(base string, action string, params interface{}) {
   for _, route := range s.routes {
     if route.pattern == base {
-      if route.clients != nil {
-        route.mutex.RLock()
-        for _, client := range route.clients {
-          client.Send(action, params)
-        }
-        route.mutex.RUnlock()
-      }
+      route.clients.Range(func (id, client interface{}) bool {
+        client.(*SocketClient).Send(action, params)
+        return true
+      })
 
       break
     }
@@ -244,16 +234,18 @@ func (s *Socket) sendBaseCluster(base string, action string, params interface{})
 func (s *Socket) sendClientCluster(clientID string, action string, params interface{}) {
   RoutesLoop:
     for _, route := range s.routes {
-      if route.clients != nil {
-        route.mutex.RLock()
-        for _, client := range route.clients {
-          if client.id == clientID {
-            client.Send(action, params)
+      bk := false
+      route.clients.Range(func (id, client interface{}) bool {
+        if client.(*SocketClient).id == clientID {
+          client.(*SocketClient).Send(action, params)
 
-            break RoutesLoop
-          }
+          bk = true
+          return false
         }
-        route.mutex.RUnlock()
+        return true
+      })
+      if bk {
+        break RoutesLoop
       }
     }
 }
