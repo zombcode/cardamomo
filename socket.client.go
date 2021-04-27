@@ -7,6 +7,9 @@ import (
   "time"
   "math/rand"
   "golang.org/x/net/websocket"
+  "net/http"
+  "net"
+  "strings"
 )
 
 type SocketClient struct {
@@ -35,7 +38,10 @@ type SocketAction struct {
 func NewSocketClient(ws *websocket.Conn, route *SocketRoute) SocketClient {
   rand.Seed(time.Now().UnixNano())
   id := RandStringRunes(32)
-  ip := ws.Request().RemoteAddr
+  ip, err := getIP(ws.Request())
+  if err != nil {
+    ip = "0.0.0.0:0"
+  }
 
   return SocketClient{WebSocket: ws, route: route, id: id, ip: ip}
 }
@@ -120,6 +126,36 @@ func (sc *SocketClient) OnSocketAction(action string, callback SockActionFunc) {
 func (sc *SocketClient) Send(action string, params interface{}) {
   msg := SocketMessage{Action:action, Params: params}
   websocket.JSON.Send(sc.WebSocket, msg)
+}
+
+func getIP(r *http.Request) (string, error) {
+  //Get IP from the X-REAL-IP header
+  ip := r.Header.Get("X-REAL-IP")
+  netIP := net.ParseIP(ip)
+  if netIP != nil {
+    return ip, nil
+  }
+
+  //Get IP from X-FORWARDED-FOR header
+  ips := r.Header.Get("X-FORWARDED-FOR")
+  splitIps := strings.Split(ips, ",")
+  for _, ip := range splitIps {
+    netIP := net.ParseIP(ip)
+    if netIP != nil {
+      return ip, nil
+    }
+  }
+
+  //Get IP from RemoteAddr
+  ip, _, err := net.SplitHostPort(r.RemoteAddr)
+  if err != nil {
+    return "", err
+  }
+  netIP = net.ParseIP(ip)
+  if netIP != nil {
+    return ip, nil
+  }
+  return "", fmt.Errorf("No valid ip found")
 }
 
 var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
