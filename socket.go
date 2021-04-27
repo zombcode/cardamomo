@@ -207,6 +207,34 @@ func (s *Socket) ClientExists(clientID string) bool {
   return exists
 }
 
+func (s *Socket) Client(clientID string) *SocketClient {
+  defer func() {
+    if err := recover(); err != nil {
+      fmt.Println("panic occurred:", err)
+    }
+  }()
+
+  var client *SocketClient
+
+  RoutesLoop:
+    for _, route := range s.routes {
+      bk := false
+      route.clients.Range(func (id, c interface{}) bool {
+        if c.(*SocketClient).id == clientID {
+          client = c.(*SocketClient)
+          bk = true
+          return false
+        }
+        return true
+      })
+      if bk {
+        break RoutesLoop
+      }
+    }
+
+  return client
+}
+
 // Cluster
 
 func (s *Socket) sendCluster(action string, params interface{}) {

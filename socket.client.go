@@ -14,6 +14,7 @@ type SocketClient struct {
   route *SocketRoute
   actions []*SocketAction
   id string
+  ip string
 }
 
 type SocketClientMessage struct {
@@ -34,12 +35,17 @@ type SocketAction struct {
 func NewSocketClient(ws *websocket.Conn, route *SocketRoute) SocketClient {
   rand.Seed(time.Now().UnixNano())
   id := RandStringRunes(32)
+  ip := ws.Request().RemoteAddr
 
-  return SocketClient{WebSocket: ws, route: route, id: id}
+  return SocketClient{WebSocket: ws, route: route, id: id, ip: ip}
 }
 
 func (sc *SocketClient) GetID() string {
   return sc.id
+}
+
+func (sc *SocketClient) GetIP() string {
+  return sc.ip
 }
 
 func (sc *SocketClient) Listen() {
