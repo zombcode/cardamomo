@@ -64,7 +64,7 @@ func (sc *SocketClient) Listen() {
   for {
     var msg SocketClientMessage
     err := websocket.JSON.Receive(sc.WebSocket, &msg)
-    if err == io.EOF {
+    if err == io.EOF || websocket.IsCloseError(err) {
       // Error
       // Disconnect and remove from client
       for index, action := range sc.actions {
