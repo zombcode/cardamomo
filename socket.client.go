@@ -17,6 +17,7 @@ type SocketClient struct {
   actions []*SocketAction
   id string
   ip string
+  initialized bool
 }
 
 type SocketClientMessage struct {
@@ -51,6 +52,14 @@ func (sc *SocketClient) GetID() string {
 
 func (sc *SocketClient) GetIP() string {
   return sc.ip
+}
+
+func (sc *SocketClient) IsInitialized() bool {
+    return sc.initialized
+}
+
+func (sc *SocketClient) SetInitialized() {
+    sc.initialized = true
 }
 
 func (sc *SocketClient) Listen() {
