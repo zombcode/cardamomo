@@ -2,7 +2,6 @@ package cardamomo
 
 import (
   "fmt"
-  "io"
   "encoding/json"
   "time"
   "math/rand"
