@@ -91,8 +91,18 @@ func (r * Request) GetFile(key string) (multipart.File, *multipart.FileHeader, e
 }
 
 func (r *Request) SetCookie(key string, value string, path string, domain string, expire time.Time, maxage int, secure bool, httponly bool, samesite http.SameSite) {
-  cookie := &http.Cookie{key, value, path, domain, expire, expire.Format(time.UnixDate), maxage, secure, httponly, samesite, key + "=" + value, []string{key + "=" + value}}
-  http.SetCookie(r.w, cookie)
+  cookie := &http.Cookie{
+		Name:     key,
+		Value:    value,
+		Path:     path,
+		Domain:   domain,
+		Expires:  expire,
+		MaxAge:   maxage,
+		Secure:   secure,
+		HttpOnly: httponly,
+		SameSite: samesite,
+	}
+	http.SetCookie(r.w, cookie)
 }
 
 func (r *Request) GetCookie(key string, defaultValue string) string {
