@@ -77,16 +77,6 @@ func (sc *SocketClient) Listen() {
         <-ticker.C
         err := sc.Send("CardamomoPing", make(map[string]interface{}))
         if err != nil {
-          fmt.Printf("Socket error: %s\n", err)
-
-          for _, action := range sc.actions {
-            if action != nil && action.action == "onDisconnect" {
-              var params map[string]interface{}
-              action.callback(params)
-            }
-          }
-          
-          sc.route.clients.Delete(sc.id)
           return
         }
       }
@@ -114,34 +104,10 @@ func (sc *SocketClient) Listen() {
         case "CardamomoSocketInit":
           params := make(map[string]interface{})
           params["id"] = sc.GetID()
-          err := sc.Send("CardamomoSocketInit", params)
-          if err != nil {
-            fmt.Printf("Socket error: %s\n", err)
-            
-            for _, action := range sc.actions {
-              if action != nil && action.action == "onDisconnect" {
-                var params map[string]interface{}
-                action.callback(params)
-              }
-            }
-            
-            sc.route.clients.Delete(sc.id)
-          }
+          sc.Send("CardamomoSocketInit", params)
 
         case "CardamomoPing":
-          err := sc.Send("CardamomoPong", make(map[string]interface{}))
-          if err != nil {
-            fmt.Printf("Socket error: %s\n", err)
-            
-            for _, action := range sc.actions {
-              if action != nil && action.action == "onDisconnect" {
-                var params map[string]interface{}
-                action.callback(params)
-              }
-            }
-            
-            sc.route.clients.Delete(sc.id)
-          }
+          sc.Send("CardamomoPong", make(map[string]interface{}))
 
         default:
           for _, action := range sc.actions {
@@ -163,7 +129,7 @@ func (sc *SocketClient) OnSocketAction(action string, callback SockActionFunc) {
   sc.actions = append(sc.actions, &socketAction)
 }
 
-func (sc *SocketClient) Send(action string, params interface{}) {
+func (sc *SocketClient) Send(action string, params interface{}) error {
   defer func() {
     if err := recover(); err != nil {
       fmt.Println("Panic occurred on \"Send\":", err)
@@ -184,7 +150,9 @@ func (sc *SocketClient) Send(action string, params interface{}) {
     }
 
     sc.route.clients.Delete(sc.id)
+    return err
   }
+  return nil
 }
 
 func getIP(r *http.Request) (string, error) {
