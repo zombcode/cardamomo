@@ -68,6 +68,29 @@ func (sc *SocketClient) Listen() {
         fmt.Println("Panic occurred on \"Listen\":", err)
       }
     }()
+    
+    go func() {
+      ticker := time.NewTicker(30 * time.Second)
+      defer ticker.Stop()
+
+      for {
+        <-ticker.C
+        err := sc.Send("CardamomoPing", make(map[string]interface{}))
+        if err != nil {
+          fmt.Printf("Socket error: %s\n", err)
+
+          for _, action := range sc.actions {
+            if action != nil && action.action == "onDisconnect" {
+              var params map[string]interface{}
+              action.callback(params)
+            }
+          }
+          
+          sc.route.clients.Delete(sc.id)
+          return
+        }
+      }
+    }()
 
     for {
       var msg SocketClientMessage
@@ -91,10 +114,34 @@ func (sc *SocketClient) Listen() {
         case "CardamomoSocketInit":
           params := make(map[string]interface{})
           params["id"] = sc.GetID()
-          sc.Send("CardamomoSocketInit", params)
+          err := sc.Send("CardamomoSocketInit", params)
+          if err != nil {
+            fmt.Printf("Socket error: %s\n", err)
+            
+            for _, action := range sc.actions {
+              if action != nil && action.action == "onDisconnect" {
+                var params map[string]interface{}
+                action.callback(params)
+              }
+            }
+            
+            sc.route.clients.Delete(sc.id)
+          }
 
         case "CardamomoPing":
-          sc.Send("CardamomoPong", make(map[string]interface{}))
+          err := sc.Send("CardamomoPong", make(map[string]interface{}))
+          if err != nil {
+            fmt.Printf("Socket error: %s\n", err)
+            
+            for _, action := range sc.actions {
+              if action != nil && action.action == "onDisconnect" {
+                var params map[string]interface{}
+                action.callback(params)
+              }
+            }
+            
+            sc.route.clients.Delete(sc.id)
+          }
 
         default:
           for _, action := range sc.actions {
