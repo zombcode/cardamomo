@@ -9,6 +9,7 @@ import (
 	"regexp"
 	"strings"
 	"strconv"
+	"time"
 )
 
 type Cardamomo struct {
@@ -141,15 +142,26 @@ func (c *Cardamomo) RunAndCallback(handler http.Handler) error {
 		}
 	}
 
+	// Build the server explicitly so idle keep-alive connections are reaped.
+	// Without IdleTimeout, idle HTTP keep-alives hold a socket FD open forever
+	// and pile up alongside leaked WebSocket sockets. WebSocket upgrades are
+	// hijacked before these timeouts apply, so they are unaffected.
+	server := &http.Server{
+		Addr:              ":" + c.Config["server"]["port"],
+		Handler:           handler,
+		IdleTimeout:       120 * time.Second,
+		ReadHeaderTimeout: 15 * time.Second,
+	}
+
 	if c.tls.enabled == true {
 		// Start HTTPS server
 		fmt.Printf("\n * Starting HTTPS server at: https://%s:%s\n", c.Config["server"]["ip"], c.Config["server"]["port"])
-	  return http.ListenAndServeTLS(":" + c.Config["server"]["port"], c.tls.cert, c.tls.key, handler)
+	  return server.ListenAndServeTLS(c.tls.cert, c.tls.key)
 	}
 
 	// Start HTTP server
 	fmt.Printf("\n * Starting HTTP server at: http://%s:%s\n", c.Config["server"]["ip"], c.Config["server"]["port"])
-  return http.ListenAndServe(":" + c.Config["server"]["port"], handler)
+  return server.ListenAndServe()
 }
 
 func (c *Cardamomo) HandleFunc(w http.ResponseWriter, req *http.Request) {

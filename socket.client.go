@@ -68,7 +68,12 @@ func (sc *SocketClient) Listen() {
         fmt.Println("Panic occurred on \"Listen\":", err)
       }
     }()
-    
+
+    // Guarantee the underlying socket FD is always released when Listen returns.
+    // Without this, ungraceful/half-open disconnects leave sockets stuck in
+    // CLOSE-WAIT and leak file descriptors until the process hits EMFILE.
+    defer sc.WebSocket.Close()
+
     go func() {
       ticker := time.NewTicker(30 * time.Second)
       defer ticker.Stop()
@@ -77,12 +82,21 @@ func (sc *SocketClient) Listen() {
         <-ticker.C
         err := sc.Send("CardamomoPing", make(map[string]interface{}))
         if err != nil {
+          // The peer is gone: close the socket so the blocked Receive below
+          // unblocks immediately and the client is reaped.
+          sc.WebSocket.Close()
           return
         }
       }
     }()
 
     for {
+      // Reap dead/half-open connections. Clients ping every ~10s, so no inbound
+      // traffic for 120s means the peer is gone (mobile killed, network cut,
+      // LB/CF dropped the conn without a FIN). This bounds the lifetime of a
+      // leaked FD instead of letting Receive block forever.
+      sc.WebSocket.SetReadDeadline(time.Now().Add(120 * time.Second))
+
       var msg SocketClientMessage
       err := websocket.JSON.Receive(sc.WebSocket, &msg)
       if err != nil {
