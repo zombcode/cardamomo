@@ -5,6 +5,9 @@ import (
   "encoding/json"
   "time"
   "math/rand"
+  crand "crypto/rand"
+  "math/big"
+  "sync/atomic"
   "golang.org/x/net/websocket"
   "net/http"
   "net"
@@ -18,6 +21,9 @@ type SocketClient struct {
   id string
   ip string
   initialized bool
+  // authenticated is set (atomically, 0/1) by SetAuthenticated and read by
+  // the AuthTimeout timer from another goroutine.
+  authenticated int32
 }
 
 type SocketClientMessage struct {
@@ -36,7 +42,6 @@ type SocketAction struct {
 }
 
 func NewSocketClient(ws *websocket.Conn, route *SocketRoute) SocketClient {
-  rand.Seed(time.Now().UnixNano())
   id := RandStringRunes(32)
   ip, err := getIP(ws.Request())
   if err != nil {
@@ -60,6 +65,19 @@ func (sc *SocketClient) IsInitialized() bool {
 
 func (sc *SocketClient) SetInitialized() {
     sc.initialized = true
+}
+
+// SetAuthenticated marks the client as authenticated, which stops the
+// SocketOptions.AuthTimeout timer of its base from closing it. Call it once
+// the client has proved who it is (a valid token in its first message, say).
+// It is harmless on bases without AuthTimeout.
+func (sc *SocketClient) SetAuthenticated() {
+  atomic.StoreInt32(&sc.authenticated, 1)
+}
+
+// IsAuthenticated reports whether SetAuthenticated has been called.
+func (sc *SocketClient) IsAuthenticated() bool {
+  return atomic.LoadInt32(&sc.authenticated) == 1
 }
 
 func (sc *SocketClient) Listen() {
@@ -201,10 +219,19 @@ func getIP(r *http.Request) (string, error) {
 
 var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
+// RandStringRunes returns n random letters. It draws from crypto/rand (client
+// ids must not be guessable) and falls back to math/rand only if the system
+// source fails.
 func RandStringRunes(n int) string {
   b := make([]rune, n)
+  max := big.NewInt(int64(len(letterRunes)))
   for i := range b {
-    b[i] = letterRunes[rand.Intn(len(letterRunes))]
+    v, err := crand.Int(crand.Reader, max)
+    if err != nil {
+      b[i] = letterRunes[rand.Intn(len(letterRunes))]
+      continue
+    }
+    b[i] = letterRunes[v.Int64()]
   }
   return string(b)
 }

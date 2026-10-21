@@ -46,20 +46,19 @@ func (r *Request) OriginalRequest() *http.Request {
 }
 
 func (r *Request) GetParam(key string, defaultValue string) string {
-   reg, _ := regexp.Compile(r.route.patternRegex)
-   if reg.MatchString(r.httprequest.URL.Path) {
-     urlparams := reg.FindStringSubmatch(r.httprequest.URL.Path)
-
-     params := make(map[string]string)
-     index := 1
-     for _, param := range r.route.paramsOrder {
-       params[param] = urlparams[index]
-
-       if param == key {
-         return urlparams[index]
+   if r.route != nil && len(r.route.paramsOrder) > 0 {
+     reg := r.route.regex
+     if reg == nil && r.route.patternRegex != "" {
+       // A route that did not go through prepareRoutes (built by hand).
+       reg, _ = regexp.Compile(r.route.patternRegex)
+     }
+     if reg != nil {
+       urlparams := reg.FindStringSubmatch(r.httprequest.URL.Path)
+       for index, param := range r.route.paramsOrder {
+         if param == key && index+1 < len(urlparams) {
+           return urlparams[index+1]
+         }
        }
-
-       index += 1
      }
    }
 

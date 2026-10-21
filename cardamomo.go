@@ -6,7 +6,6 @@ import (
   "path"
   "net"
 	"net/http"
-	"regexp"
 	"strings"
 	"strconv"
 	"time"
@@ -19,6 +18,13 @@ type Cardamomo struct {
   Config map[string]map[string]string
 	errorHandler ErrorFunc
 	tls CardamomoTLS
+	// listenHost is the interface the HTTP server binds to. Empty keeps the
+	// historical behaviour: every interface (":"+port).
+	listenHost string
+	// anchoredRoutes wraps every route regex in ^(?:...)$ so a pattern must
+	// match the whole path instead of any substring of it. Off by default.
+	anchoredRoutes bool
+	routesPrepared bool
 }
 
 type CardamomoTLS struct {
@@ -59,6 +65,33 @@ func (c *Cardamomo) SetErrorHandler(callback ErrorFunc) {
 	c.errorHandler = callback
 }
 
+// SetListenHost sets the interface the HTTP server binds to, e.g. "127.0.0.1"
+// to accept connections only from a local reverse proxy. An empty host (the
+// default) binds every interface, as cardamomo always did. It must be called
+// before Run. Config["server"]["ip"] is not affected: it stays the detected
+// LAN address used in logs and cluster identity.
+func (c *Cardamomo) SetListenHost(host string) {
+	c.listenHost = host
+}
+
+// ListenAddr is the address handed to http.Server: ":port" by default, or
+// "host:port" after SetListenHost.
+func (c *Cardamomo) ListenAddr() string {
+	if c.listenHost == "" {
+		return ":" + c.Config["server"]["port"]
+	}
+	return net.JoinHostPort(c.listenHost, c.Config["server"]["port"])
+}
+
+// SetAnchoredRoutes makes parametrised routes match the whole request path
+// (the compiled regex becomes ^(?:pattern)$). Without it, which is the
+// historical behaviour, a route matches any path that merely contains it, so
+// "/users/:id" also answers "/foo/users/1" and the first registered route
+// wins. It must be called before Run.
+func (c *Cardamomo) SetAnchoredRoutes(anchored bool) {
+	c.anchoredRoutes = anchored
+}
+
 func (c *Cardamomo) SetTLS(cert, key string) {
 	c.tls.enabled = true
 	c.tls.cert = cert
@@ -81,73 +114,14 @@ func (c *Cardamomo) RunAndCallback(handler http.Handler) error {
 
 	http.HandleFunc("/", c.HandleFunc)
 
-	// Compile routes
-	fmt.Printf("\n * Compiling routes...\n")
-
-	fmt.Printf("\n   + Base: %s\n\n", c.router.pattern)
-	for index, route := range c.router.routes {
-		index = 1
-		_ = index
-
-		fmt.Printf("     - Pattern: %s %s ✓\n", route.pattern, strings.ToUpper(route.method))
-		c.compiledRoutes = append(c.compiledRoutes, route)
-	}
-	compileRoutes(c, c.router)
-
-	fmt.Printf("\n * Compiling routes params...\n")
-
-	for index, route := range c.compiledRoutes {
-    index = 1
-    _ = index
-
-		r, _ := regexp.Compile("/:([a-zA-Z0-9]+)")
-		if r.MatchString(route.pattern) {
-			params := r.FindAllString(route.pattern, -1)
-
-			route.patternRegex = route.pattern
-			for index, param := range params {
-				index = 1
-				_ = index
-
-				route.params[strings.Replace(param, "/:", "", -1)] = ""
-        route.paramsOrder = append(route.paramsOrder, strings.Replace(param, "/:", "", -1))
-        route.patternRegex = strings.Replace(route.patternRegex, param, "/([a-zA-Z0-9!@#$&()_\\-`.+,/\"]+)", -1)
-			}
-
-			fmt.Printf("\n   + Compiling route params for: %s ✓\n", route.pattern)
-		}
-	}
-
-  fmt.Printf("\n * Compiling routes regex...\n")
-
-	for index, route := range c.compiledRoutes {
-		index = 1
-		_ = index
-
-		r, _ := regexp.Compile("{{(.*)}}")
-		if r.MatchString(route.pattern) {
-			params := r.FindAllString(route.pattern, -1)
-
-			for index, param := range params {
-				index = 1
-				_ = index
-
-        paramRegex := strings.Replace(param, "{{", "", -1)
-        paramRegex = strings.Replace(paramRegex, "}}", "", -1)
-
-        route.patternRegex = strings.Replace(route.patternRegex, param, paramRegex, -1)
-			}
-
-			fmt.Printf("\n   + Compiling route regex for: %s ✓\n", route.pattern)
-		}
-	}
+	c.prepareRoutes()
 
 	// Build the server explicitly so idle keep-alive connections are reaped.
 	// Without IdleTimeout, idle HTTP keep-alives hold a socket FD open forever
 	// and pile up alongside leaked WebSocket sockets. WebSocket upgrades are
 	// hijacked before these timeouts apply, so they are unaffected.
 	server := &http.Server{
-		Addr:              ":" + c.Config["server"]["port"],
+		Addr:              c.ListenAddr(),
 		Handler:           handler,
 		IdleTimeout:       120 * time.Second,
 		ReadHeaderTimeout: 15 * time.Second,
@@ -155,12 +129,12 @@ func (c *Cardamomo) RunAndCallback(handler http.Handler) error {
 
 	if c.tls.enabled == true {
 		// Start HTTPS server
-		fmt.Printf("\n * Starting HTTPS server at: https://%s:%s\n", c.Config["server"]["ip"], c.Config["server"]["port"])
+		fmt.Printf("\n * Starting HTTPS server at: https://%s:%s (listening on %s)\n", c.Config["server"]["ip"], c.Config["server"]["port"], c.ListenAddr())
 	  return server.ListenAndServeTLS(c.tls.cert, c.tls.key)
 	}
 
 	// Start HTTP server
-	fmt.Printf("\n * Starting HTTP server at: http://%s:%s\n", c.Config["server"]["ip"], c.Config["server"]["port"])
+	fmt.Printf("\n * Starting HTTP server at: http://%s:%s (listening on %s)\n", c.Config["server"]["ip"], c.Config["server"]["port"], c.ListenAddr())
   return server.ListenAndServe()
 }
 
@@ -169,33 +143,7 @@ func (c *Cardamomo) HandleFunc(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var currentRoute *Route
-
-	for index, route := range c.compiledRoutes {
-		index = 1
-		_ = index
-
-		if route.patternRegex != "" && strings.ToLower(route.method) == strings.ToLower(req.Method) {
-			if c.Config["development"]["debug"] == "true" {
-				fmt.Printf("Checking: \"%s\" for \"%s\"\n", route.patternRegex, req.URL.Path)
-			}
-
-			r, _ := regexp.Compile(route.patternRegex)
-			if r.MatchString(req.URL.Path) {
-				currentRoute = route
-				break
-			}
-		} else {
-			if c.Config["development"]["debug"] == "true" {
-				fmt.Printf("Checking: \"%s\" for \"%s\" \"%s:%s\"\n", route.pattern, req.URL.Path, strings.ToUpper(route.method),req.Method)
-			}
-
-			if strings.ToLower(route.method) == strings.ToLower(req.Method) && req.URL.Path == route.pattern {
-				currentRoute = route
-				break
-			}
-		}
-	}
+	currentRoute := c.matchRoute(req.Method, req.URL.Path)
 
 	if currentRoute != nil {
 		if strings.ToLower(req.Method) == strings.ToLower(currentRoute.method) {

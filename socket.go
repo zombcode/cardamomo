@@ -51,8 +51,19 @@ func (s *Socket) OnSocketBase(pattern string, callback SockFunc) {
   s.addBase(pattern, callback);
 }
 
+// OnSocketBaseWithOptions is OnSocketBase with per-base hardening: message
+// size cap, Origin check, authentication deadline and connections per IP.
+// See SocketOptions; its zero value is the same as OnSocketBase.
+func (s *Socket) OnSocketBaseWithOptions(pattern string, options SocketOptions, callback SockFunc) {
+  s.addBaseWithOptions(pattern, callback, options)
+}
+
 func (s *Socket) addBase(pattern string, callback SockFunc) SocketRoute {
-  route := NewSocketRoute(s, pattern, callback)
+  return s.addBaseWithOptions(pattern, callback, SocketOptions{})
+}
+
+func (s *Socket) addBaseWithOptions(pattern string, callback SockFunc, options SocketOptions) SocketRoute {
+  route := NewSocketRouteWithOptions(s, pattern, callback, options)
   route.Listen()
   s.routes = append(s.routes, &route)
 

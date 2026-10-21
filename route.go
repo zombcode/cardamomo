@@ -1,15 +1,14 @@
 package cardamomo
 
 import (
-  _"fmt"
-	_"net/http"
-  _"strings"
+	"regexp"
 )
 
 type Route struct {
   method string
   pattern string
   patternRegex string
+  regex *regexp.Regexp // compiled patternRegex, set by prepareRoutes
   params map[string]string
   paramsOrder []string
   callback ReqFunc
